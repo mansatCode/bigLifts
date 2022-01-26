@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <ImageButton
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:id="@+id/toolbar_current_workout_iv_discardWorkout"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -20,7 +21,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.15" />
 
-    <ImageView
+    <ImageButton
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:id="@+id/toolbar_current_workout_iv_timer"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -33,14 +35,16 @@
         app:layout_constraintHeight_percent="1"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/toolbar_current_workout_iv_addNote"
+    <ImageButton
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:id="@+id/toolbar_current_workout_iv_viewNote"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="13dp"
         android:src="@drawable/ic_baseline_pen_24"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar_current_workout_tv_notes"
         app:layout_constraintEnd_toStartOf="@id/toolbar_current_workout_iv_timer"
         app:layout_constraintHeight_percent="1"
         app:layout_constraintTop_toTopOf="parent" />
@@ -106,8 +110,8 @@
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/toolbar_current_workout_iv_addNote"
-        app:layout_constraintRight_toRightOf="@id/toolbar_current_workout_iv_addNote"
+        app:layout_constraintLeft_toLeftOf="@id/toolbar_current_workout_iv_viewNote"
+        app:layout_constraintRight_toRightOf="@id/toolbar_current_workout_iv_viewNote"
         app:layout_constraintTop_toTopOf="@id/toolbar_current_workout_tv_duration" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

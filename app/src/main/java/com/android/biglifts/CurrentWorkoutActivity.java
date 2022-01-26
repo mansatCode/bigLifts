@@ -6,6 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.biglifts.adapters.CurrentWorkoutRecyclerAdapter;
 import com.android.biglifts.models.LogEntry;
@@ -13,12 +16,15 @@ import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 
 import java.util.ArrayList;
 
-public class CurrentWorkoutActivity extends AppCompatActivity implements CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener {
+public class CurrentWorkoutActivity extends AppCompatActivity implements
+        CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
+        View.OnClickListener {
 
     private static final String TAG = "CurrentWorkoutActivity";
 
     // UI Components
     private RecyclerView mRecyclerView;
+    private ImageView mViewNotes, mRestTimer, mDiscardWorkout;
 
     // Variables
     private ArrayList<LogEntry> mLogEntries = new ArrayList<>();
@@ -30,6 +36,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements Current
         setContentView(R.layout.activity_current_workout);
 
         initUI();
+        setListeners();
         setSupportActionBar((Toolbar)findViewById(R.id.activity_current_workout_tb));
         initRecyclerView();
         insertDummyLogEntries();
@@ -38,6 +45,16 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements Current
     private void initUI()
     {
         mRecyclerView = findViewById(R.id.activity_current_workout_rv);
+        mViewNotes = findViewById(R.id.toolbar_current_workout_iv_viewNote);
+        mRestTimer = findViewById(R.id.toolbar_current_workout_iv_timer);
+        mDiscardWorkout = findViewById(R.id.toolbar_current_workout_iv_discardWorkout);
+    }
+
+    private void setListeners()
+    {
+        mViewNotes.setOnClickListener(this);
+        mRestTimer.setOnClickListener(this);
+        mDiscardWorkout.setOnClickListener(this);
     }
 
     private void initRecyclerView()
@@ -66,5 +83,20 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements Current
         LogEntry logEntry = mLogEntries.get(position);
         logEntry.setExpanded(!logEntry.isExpanded());
         mCurrentWorkoutRecyclerAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.toolbar_current_workout_iv_viewNote:
+                Toast.makeText(this, "View note", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_current_workout_iv_timer:
+                Toast.makeText(this, "Rest timer", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.toolbar_current_workout_iv_discardWorkout:
+                Toast.makeText(this, "Discard", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }
