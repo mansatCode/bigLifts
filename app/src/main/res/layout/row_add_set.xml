@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row_add_set_ll_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_row_add_set"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/row_add_set_tv_setNumber"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4"
+        android:gravity="center"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:hint="1" />
+
+    <TextView
+        android:id="@+id/row_add_set_tv_previousSetData"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="2dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/set_number_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="12 kg x 8" />
+
+    <EditText
+        android:id="@+id/row_add_set_et_weight"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="2dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_custom_input"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/previous_set_text_view_data"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:hint="12" />
+
+    <EditText
+        android:id="@+id/row_add_set_et_reps"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginRight="2dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_custom_input"
+        android:gravity="center"
+        android:inputType="numberDecimal"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/weight_edit_text"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:hint="8" />
+
+    <CheckBox
+        android:id="@+id/row_add_set_chk_confirmSet"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginRight="4dp"
+        android:layout_weight="0.3"
+        android:checked="false" />
+
+</LinearLayout>

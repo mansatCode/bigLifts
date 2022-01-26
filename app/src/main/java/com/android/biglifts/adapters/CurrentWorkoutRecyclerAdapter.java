@@ -1,0 +1,78 @@
+package com.android.biglifts.adapters;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.biglifts.R;
+import com.android.biglifts.models.LogEntry;
+
+import java.util.ArrayList;
+
+public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentWorkoutRecyclerAdapter.ViewHolder> {
+
+    private ArrayList<LogEntry> mLogEntries = new ArrayList<>();
+    private OnExerciseInWorkoutListener mOnExerciseInWorkoutListener;
+
+    public CurrentWorkoutRecyclerAdapter(ArrayList<LogEntry> logEntries, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
+        this.mLogEntries = logEntries;
+        this.mOnExerciseInWorkoutListener = onExerciseInWorkoutListener;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_current_workout_exercises, parent, false);
+        return new ViewHolder(view, mOnExerciseInWorkoutListener);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull CurrentWorkoutRecyclerAdapter.ViewHolder holder, int position) {
+        holder.tv_exerciseName.setText(mLogEntries.get(position).getExerciseName());
+
+        boolean isExpanded = mLogEntries.get(position).isExpanded();
+        holder.cl_expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mLogEntries.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ImageView iv_expand;
+        TextView tv_exerciseName;
+        Button btn_addSet;
+        ConstraintLayout cl_expandableLayout;
+
+        OnExerciseInWorkoutListener onExerciseInWorkoutListener;
+
+        public ViewHolder(@NonNull View itemView, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
+            super(itemView);
+            iv_expand = itemView.findViewById(R.id.row_current_workout_exercises_iv_tripleLines);
+            tv_exerciseName = itemView.findViewById(R.id.row_current_workout_exercises_tv_exerciseName);
+            btn_addSet = itemView.findViewById(R.id.row_current_workout_exercises_btn_addSet);
+            cl_expandableLayout = itemView.findViewById(R.id.row_current_workout_exercises_cl_expandableLayout);
+
+            this.onExerciseInWorkoutListener = onExerciseInWorkoutListener;
+
+            iv_expand.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            onExerciseInWorkoutListener.onExerciseInWorkoutClick(getBindingAdapterPosition()); // perhaps wrong. getAdapterPosition() deprecated
+        }
+    }
+
+    public interface OnExerciseInWorkoutListener{
+        void onExerciseInWorkoutClick(int position);
+    }
+}
