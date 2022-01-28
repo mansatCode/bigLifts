@@ -12,17 +12,17 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.R;
-import com.android.biglifts.models.LogEntry;
+import com.android.biglifts.models.ExerciseModel;
 
 import java.util.ArrayList;
 
 public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentWorkoutRecyclerAdapter.ViewHolder> {
 
-    private ArrayList<LogEntry> mLogEntries = new ArrayList<>();
+    private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
     private OnExerciseInWorkoutListener mOnExerciseInWorkoutListener;
 
-    public CurrentWorkoutRecyclerAdapter(ArrayList<LogEntry> logEntries, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
-        this.mLogEntries = logEntries;
+    public CurrentWorkoutRecyclerAdapter(ArrayList<ExerciseModel> exerciseModels, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
+        this.mExercisesList = exerciseModels;
         this.mOnExerciseInWorkoutListener = onExerciseInWorkoutListener;
     }
 
@@ -35,15 +35,15 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
 
     @Override
     public void onBindViewHolder(@NonNull CurrentWorkoutRecyclerAdapter.ViewHolder holder, int position) {
-        holder.tv_exerciseName.setText(mLogEntries.get(position).getExerciseName());
+        holder.tv_exerciseName.setText(mExercisesList.get(position).getExerciseName());
 
-        boolean isExpanded = mLogEntries.get(position).isExpanded();
+        boolean isExpanded = mExercisesList.get(position).isExpanded();
         holder.cl_expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public int getItemCount() {
-        return mLogEntries.size();
+        return mExercisesList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
