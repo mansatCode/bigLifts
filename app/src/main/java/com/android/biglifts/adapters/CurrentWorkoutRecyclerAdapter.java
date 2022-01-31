@@ -54,8 +54,8 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
         holder.rv_logEntries.setAdapter(setRecyclerAdapter);
         holder.rv_logEntries.setRecycledViewPool(viewPool);
 
-        boolean isExpanded = mExercisesList.get(position).isExpanded();
-        holder.cl_expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+//        boolean isExpanded = mExercisesList.get(position).isExpanded();
+//        holder.cl_expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
     }
 
     @Override

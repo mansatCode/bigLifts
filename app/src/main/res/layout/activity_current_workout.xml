@@ -64,13 +64,27 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="@color/primaryDarkColor"
+                android:text="+ Add Exercise"
+                android:textColor="#2469b3"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/activity_current_workout_rv" />
+
+            <Button
+                android:id="@+id/activity_current_workout_btn_finishWorkout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="@color/primaryDarkColor"
-                android:text="Add Exercise"
+                android:text="Finish Workout"
                 android:textColor="#2469b3"
                 android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@id/activity_current_workout_rv"
+                app:layout_constraintTop_toBottomOf="@id/activity_current_workout_btn_addExercise"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,6 +42,8 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
         logEntry.setSetNumber(holder.getBindingAdapterPosition()+1);
 
         holder.tv_setNumber.setText(String.valueOf(logEntry.getSetNumber()));
+        holder.et_weight.setText(String.valueOf(logEntry.getWeight()));
+        holder.et_reps.setText(String.valueOf(logEntry.getReps()));
     }
 
     @Override

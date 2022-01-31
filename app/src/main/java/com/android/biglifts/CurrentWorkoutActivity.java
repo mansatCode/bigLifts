@@ -39,7 +39,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     // UI Components
     private RecyclerView mParentRecyclerView;
     private ImageView mViewNotes, mRestTimer, mDiscardWorkout;
-    private Button mAddExercise;
+    private Button mAddExercise, mFinishWorkout;
 
     // Variables
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
@@ -65,6 +65,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mRestTimer = findViewById(R.id.toolbar_current_workout_iv_timer);
         mDiscardWorkout = findViewById(R.id.toolbar_current_workout_iv_discardWorkout);
         mAddExercise = findViewById(R.id.activity_current_workout_btn_addExercise);
+        mFinishWorkout = findViewById(R.id.activity_current_workout_btn_finishWorkout);
     }
 
     private void setListeners()
@@ -73,6 +74,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mRestTimer.setOnClickListener(this);
         mDiscardWorkout.setOnClickListener(this);
         mAddExercise.setOnClickListener(this);
+        mFinishWorkout.setOnClickListener(this);
     }
 
     private void initRecyclerView()
@@ -90,12 +92,12 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         ExerciseModel exercise = mExercisesList.get(position);
         switch(view.getId()) {
             case R.id.row_current_workout_exercises_iv_tripleLines:
-                View currentFocus = getCurrentFocus();
-                if (currentFocus != null) {
-                    currentFocus.clearFocus();
-                }
-                exercise.setExpanded(!exercise.isExpanded());
-                mCurrentWorkoutRecyclerAdapter.notifyItemChanged(position);
+//                View currentFocus = getCurrentFocus();
+//                if (currentFocus != null) {
+//                    currentFocus.clearFocus();
+//                }
+//                exercise.setExpanded(!exercise.isExpanded());
+//                mCurrentWorkoutRecyclerAdapter.notifyItemChanged(position);
                 break;
             case R.id.row_current_workout_exercises_iv_options:
                 Toast.makeText(this, "Options", Toast.LENGTH_SHORT).show();
@@ -126,6 +128,16 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
                 Toast.makeText(this, "Discard", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.activity_current_workout_btn_finishWorkout:
+                //TODO - save workout to database. LogEntryModels only for now.
+
+                for(ExerciseModel exerciseModel : mExercisesList){
+                    ArrayList<LogEntryModel> logEntryModels = exerciseModel.getLogEntriesList();
+                    mBigLiftsRepository.insertLogEntries(logEntryModels);
+                }
+
+                Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

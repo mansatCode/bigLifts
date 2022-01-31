@@ -30,7 +30,7 @@ public class ExerciseModel implements Parcelable {
     private String category;
 
     @Ignore
-    private boolean isExpanded;
+    private boolean isExpanded = true;
 
     @Ignore
     private ArrayList<LogEntryModel> logEntriesList;
@@ -39,12 +39,12 @@ public class ExerciseModel implements Parcelable {
         this.exerciseName = exerciseName;
         this.bodyPart = bodyPart;
         this.category = category;
-        this.isExpanded = false;
+//        this.isExpanded = false;
     }
 
     @Ignore
     public ExerciseModel() {
-        this.isExpanded = false;
+//        this.isExpanded = false;
     }
 
 
