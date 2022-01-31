@@ -1,11 +1,11 @@
 package com.android.biglifts.persistence;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 
 import com.android.biglifts.models.ExerciseModel;
+import com.android.biglifts.models.LogEntryModel;
 
 import java.util.List;
 
@@ -25,6 +25,8 @@ public class BigLiftsRepository {
         mBigLiftsDatabase = BigLiftsDatabase.getInstance(context);
         mContext = context;
     }
+
+    //region tblExercise Methods
 
     public void insertExerciseTask(List<ExerciseModel> exerciseModels) {
         Completable.fromAction(() -> mBigLiftsDatabase.getExerciseDao().insertExercises(exerciseModels))
@@ -55,5 +57,18 @@ public class BigLiftsRepository {
     public LiveData<List<ExerciseModel>> retrieveAllExercisesTask() {
         return mBigLiftsDatabase.getExerciseDao().getAllExercises();
     }
+
+    //endregion
+
+    //region tblLogEntry Methods
+
+    public void insertLogEntries(List<LogEntryModel> logEntryModels) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getLogEntryDao().insertLogEntries(logEntryModels))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    //endregion
 
 }

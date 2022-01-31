@@ -14,6 +14,9 @@ import java.util.List;
 @Dao
 public interface ExerciseDao {
     @Insert
+    void prePopulateExerciseTable(ExerciseModel[] exerciseModels);
+
+    @Insert
     void insertExercises(List<ExerciseModel> exerciseModels);
 
     @Update

@@ -1,5 +1,6 @@
 package com.android.biglifts.adapters;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.R;
@@ -18,8 +20,9 @@ import java.util.ArrayList;
 
 public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentWorkoutRecyclerAdapter.ViewHolder> {
 
-    private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
+    private ArrayList<ExerciseModel> mExercisesList;
     private OnExerciseInWorkoutListener mOnExerciseInWorkoutListener;
+    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 
     public CurrentWorkoutRecyclerAdapter(ArrayList<ExerciseModel> exerciseModels, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
         this.mExercisesList = exerciseModels;
@@ -35,7 +38,21 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
 
     @Override
     public void onBindViewHolder(@NonNull CurrentWorkoutRecyclerAdapter.ViewHolder holder, int position) {
-        holder.tv_exerciseName.setText(mExercisesList.get(position).getExerciseName());
+        ExerciseModel exercise = mExercisesList.get(position);
+        holder.tv_exerciseName.setText(exercise.getExerciseName());
+
+        // Here we have assigned the layout as LinearLayout with vertical orientation
+        LinearLayoutManager layoutManager = new LinearLayoutManager(holder.rv_logEntries.getContext(), LinearLayoutManager.VERTICAL, false);
+
+        // Since this is a nested layout, to define how many child items should be prefetched when the
+        // child RecyclerView is nested inside the parent RecyclerView, we use the following method
+        layoutManager.setInitialPrefetchItemCount(exercise.getLogEntriesList().size());
+
+        // Create an instance of the child item view adapter and set its adapter, layout manager and RecyclerViewPool
+        SetRecyclerAdapter setRecyclerAdapter = new SetRecyclerAdapter(exercise.getLogEntriesList());
+        holder.rv_logEntries.setLayoutManager(layoutManager);
+        holder.rv_logEntries.setAdapter(setRecyclerAdapter);
+        holder.rv_logEntries.setRecycledViewPool(viewPool);
 
         boolean isExpanded = mExercisesList.get(position).isExpanded();
         holder.cl_expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
@@ -47,32 +64,37 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView iv_expand;
+        ImageView iv_expand, iv_options;
         TextView tv_exerciseName;
         Button btn_addSet;
         ConstraintLayout cl_expandableLayout;
+        RecyclerView rv_logEntries;
 
         OnExerciseInWorkoutListener onExerciseInWorkoutListener;
 
         public ViewHolder(@NonNull View itemView, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
             super(itemView);
             iv_expand = itemView.findViewById(R.id.row_current_workout_exercises_iv_tripleLines);
+            iv_options = itemView.findViewById(R.id.row_current_workout_exercises_iv_options);
             tv_exerciseName = itemView.findViewById(R.id.row_current_workout_exercises_tv_exerciseName);
             btn_addSet = itemView.findViewById(R.id.row_current_workout_exercises_btn_addSet);
             cl_expandableLayout = itemView.findViewById(R.id.row_current_workout_exercises_cl_expandableLayout);
+            rv_logEntries = itemView.findViewById(R.id.row_current_workout_exercises_rv);
 
             this.onExerciseInWorkoutListener = onExerciseInWorkoutListener;
 
             iv_expand.setOnClickListener(this);
+            iv_options.setOnClickListener(this);
+            btn_addSet.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            onExerciseInWorkoutListener.onExerciseInWorkoutClick(getBindingAdapterPosition()); // perhaps wrong. getAdapterPosition() deprecated
+            onExerciseInWorkoutListener.onExerciseInWorkoutClick(getBindingAdapterPosition(), view); // perhaps wrong. getAdapterPosition() deprecated
         }
     }
 
     public interface OnExerciseInWorkoutListener{
-        void onExerciseInWorkoutClick(int position);
+        void onExerciseInWorkoutClick(int position, View view);
     }
 }

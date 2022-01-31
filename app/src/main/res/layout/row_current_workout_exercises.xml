@@ -45,10 +45,13 @@
                 app:layout_constraintTop_toBottomOf="@id/row_current_workout_exercises_v_line" />
 
             <ImageView
+                android:id="@+id/row_current_workout_exercises_iv_options"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:src="@drawable/ic_baseline_options_24"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/row_current_workout_exercises_tv_exerciseName"
@@ -125,7 +128,15 @@
 
                 </LinearLayout>
 
-                <!-- The rest of the stuff has to go here -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/row_current_workout_exercises_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/row_current_workout_exercises_ll_container" />
 
                 <Button
                     android:id="@+id/row_current_workout_exercises_btn_addSet"
@@ -141,7 +152,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/row_current_workout_exercises_ll_container" />
+                    app:layout_constraintTop_toBottomOf="@id/row_current_workout_exercises_rv" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BigLifts">
+        <activity android:name=".SelectExerciseActivity"></activity>
         <activity
             android:name=".CurrentWorkoutActivity"
             android:screenOrientation="portrait">
