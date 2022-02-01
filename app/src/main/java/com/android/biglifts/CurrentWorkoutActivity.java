@@ -92,12 +92,12 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         ExerciseModel exercise = mExercisesList.get(position);
         switch(view.getId()) {
             case R.id.row_current_workout_exercises_iv_tripleLines:
-//                View currentFocus = getCurrentFocus();
-//                if (currentFocus != null) {
-//                    currentFocus.clearFocus();
-//                }
-//                exercise.setExpanded(!exercise.isExpanded());
-//                mCurrentWorkoutRecyclerAdapter.notifyItemChanged(position);
+                View currentFocus = getCurrentFocus();
+                if (currentFocus != null) {
+                    currentFocus.clearFocus();
+                }
+                exercise.setExpanded(!exercise.isExpanded());
+                mCurrentWorkoutRecyclerAdapter.notifyItemChanged(position);
                 break;
             case R.id.row_current_workout_exercises_iv_options:
                 Toast.makeText(this, "Options", Toast.LENGTH_SHORT).show();

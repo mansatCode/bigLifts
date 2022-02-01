@@ -39,12 +39,12 @@ public class ExerciseModel implements Parcelable {
         this.exerciseName = exerciseName;
         this.bodyPart = bodyPart;
         this.category = category;
-//        this.isExpanded = false;
+        this.isExpanded = false;
     }
 
     @Ignore
     public ExerciseModel() {
-//        this.isExpanded = false;
+        this.isExpanded = false;
     }
 
 

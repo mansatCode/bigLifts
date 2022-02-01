@@ -27,7 +27,11 @@ public class LogEntryModel {
     private int reps;
 
     @Ignore
+    private boolean checked;
+
+    @Ignore
     public LogEntryModel() {
+        checked = false;
     }
 
     public LogEntryModel(int exerciseID, int setNumber, int weight, int reps) {
@@ -35,6 +39,15 @@ public class LogEntryModel {
         this.setNumber = setNumber;
         this.weight = weight;
         this.reps = reps;
+        checked = false;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 
     public int getId() {
