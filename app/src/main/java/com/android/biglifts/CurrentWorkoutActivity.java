@@ -134,7 +134,13 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
                 for(ExerciseModel exerciseModel : mExercisesList){
                     ArrayList<LogEntryModel> logEntryModels = exerciseModel.getLogEntriesList();
-                    mBigLiftsRepository.insertLogEntries(logEntryModels);
+                    for (LogEntryModel log : logEntryModels) {
+                        if (log.isChecked()) {
+                            ArrayList<LogEntryModel> logList = new ArrayList<>();
+                            logList.add(log);
+                            mBigLiftsRepository.insertLogEntries(logList);
+                        }
+                    }
                 }
 
                 Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();

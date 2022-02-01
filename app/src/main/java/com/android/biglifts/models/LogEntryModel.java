@@ -98,6 +98,7 @@ public class LogEntryModel {
                 ", setNumber=" + setNumber +
                 ", weight=" + weight +
                 ", reps=" + reps +
+                ", checked=" + checked +
                 '}';
     }
 }

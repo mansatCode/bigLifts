@@ -2,10 +2,12 @@ package com.android.biglifts.adapters;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -52,6 +54,14 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
         // so that it knows what item in mLogEntriesList to update
         holder.weightListener.updateLog(logEntry);
         holder.repsListener.updateLog(logEntry);
+
+        holder.chk_confirmSet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                logEntry.setChecked(isChecked);
+                Log.d(TAG, "onCheckedChanged: " + logEntry.toString());
+            }
+        });
 
         holder.tv_setNumber.setText(String.valueOf(logEntry.getSetNumber()));
         holder.et_weight.setText(String.valueOf(logEntry.getWeight()));
