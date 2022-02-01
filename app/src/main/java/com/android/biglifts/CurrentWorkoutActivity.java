@@ -1,24 +1,27 @@
 package com.android.biglifts;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.biglifts.adapters.CurrentWorkoutRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
@@ -27,7 +30,6 @@ import com.android.biglifts.persistence.BigLiftsRepository;
 import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CurrentWorkoutActivity extends AppCompatActivity implements
         CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
@@ -131,21 +133,42 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
                 //TODO - save workout to database. LogEntryModels only for now.
-
-                for(ExerciseModel exerciseModel : mExercisesList){
-                    ArrayList<LogEntryModel> logEntryModels = exerciseModel.getLogEntriesList();
-                    for (LogEntryModel log : logEntryModels) {
-                        if (log.isChecked()) {
-                            ArrayList<LogEntryModel> logList = new ArrayList<>();
-                            logList.add(log);
-                            mBigLiftsRepository.insertLogEntries(logList);
-                        }
+                for (ExerciseModel e : mExercisesList) {
+                    for (LogEntryModel l : e.getLogEntriesList()){
+                        Log.d(TAG, l.toString());
                     }
                 }
 
-                Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
+
+//                // Loop through, check for unchecked LogEntryModels
+//                for (ExerciseModel exerciseModel : mExercisesList) {
+//                    // If unchecked, display message saying "You have unfinished sets"
+//                    if (containsUnchecked(exerciseModel.getLogEntriesList())) {
+//                        showUnsavedLogsDialog();
+//                        return;
+//                    }
+//                }
+//
+//                insertWorkout();
+//
+//                Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    private void insertWorkout() {
+        for (ExerciseModel exerciseModel : mExercisesList) {
+            mBigLiftsRepository.insertLogEntries(exerciseModel.getLogEntriesList());
+        }
+    }
+
+    private boolean containsUnchecked(ArrayList<LogEntryModel> logEntriesList) {
+        for (LogEntryModel log : logEntriesList) {
+            if (!log.isChecked()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private final ActivityResultLauncher<Intent> mSelectExerciseActivity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -175,5 +198,34 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         log.setExerciseID(exerciseID);
         logEntryModelList.add(log);
         return logEntryModelList;
+    }
+
+    private void showUnsavedLogsDialog() {
+        // Create an AlertDialog.Builder and set the message, and click listeners
+        // for the positive and negative buttons on the dialog.
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you finished?");
+        builder.setMessage("All invalid/empty sets will be discarded. All sets with valid data will be automatically marked as complete.");
+
+        builder.setPositiveButton("Finish workout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO - cleanup unchecked logs
+
+
+
+                insertWorkout();
+            }
+        });
+        builder.setNegativeButton("Go back", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        // Create and show the AlertDialog
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

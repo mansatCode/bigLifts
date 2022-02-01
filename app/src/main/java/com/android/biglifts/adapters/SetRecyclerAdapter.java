@@ -12,9 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.R;
+import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.LogEntryModel;
 
 import java.util.ArrayList;
@@ -59,14 +61,28 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 logEntry.setChecked(isChecked);
-                Log.d(TAG, "onCheckedChanged: " + logEntry.toString());
             }
         });
 
         holder.tv_setNumber.setText(String.valueOf(logEntry.getSetNumber()));
-        holder.et_weight.setText(String.valueOf(logEntry.getWeight()));
-        holder.et_reps.setText(String.valueOf(logEntry.getReps()));
+        if (logEntry.getWeight() == 0) {
+            holder.et_weight.setText("");
+            holder.et_weight.setHint("0");
+        }
+        else {
+            holder.et_weight.setText(String.valueOf(logEntry.getWeight()));
+        }
+
+        if (logEntry.getReps() == 0) {
+            holder.et_reps.setText("");
+            holder.et_reps.setHint("0");
+        }
+        else {
+            holder.et_reps.setText(String.valueOf(logEntry.getReps()));
+        }
+
         holder.chk_confirmSet.setChecked(logEntry.isChecked());
+        Log.d(TAG, "onBindViewHolder: " + logEntry.toString());
     }
 
     @Override
@@ -106,8 +122,6 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
             et_reps = itemView.findViewById(R.id.row_add_set_et_reps);
             chk_confirmSet = itemView.findViewById(R.id.row_add_set_chk_confirmSet);
 
-//            chk_confirmSet.setClickable(false);
-
             this.weightListener = weightListener;
             this.repsListener = repsListener;
         }
@@ -135,7 +149,7 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            // no op
+
         }
 
         @Override

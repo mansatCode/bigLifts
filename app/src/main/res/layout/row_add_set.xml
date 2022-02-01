@@ -31,12 +31,13 @@
         android:layout_marginRight="2dp"
         android:layout_weight="1"
         android:gravity="center"
+        android:hint="12kg x 8"
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="@color/white"
+        android:textColorHint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/set_number_text_view"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="12 kg x 8" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/row_add_set_et_weight"
@@ -49,11 +50,10 @@
         android:inputType="numberDecimal"
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/primaryLightColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/previous_set_text_view_data"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:hint="12" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/row_add_set_et_reps"
@@ -66,11 +66,10 @@
         android:inputType="numberDecimal"
         android:textAppearance="?android:textAppearanceSmall"
         android:textColor="@color/white"
-        android:textColorHint="@color/white"
+        android:textColorHint="@color/primaryLightColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/weight_edit_text"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:hint="8" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <CheckBox
         android:id="@+id/row_add_set_chk_confirmSet"
