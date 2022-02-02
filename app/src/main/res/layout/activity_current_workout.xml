@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_200"
+    android:background="@color/primaryDarkColor"
     tools:context=".CurrentWorkoutActivity">
 
     <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,7 +17,7 @@
             android:id="@+id/activity_current_workout_tb"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/purple_200"
+            android:background="@drawable/bg_header"
             app:layout_scrollFlags="scroll|enterAlways">
 
             <include layout="@layout/toolbar_current_workout" />
@@ -39,12 +39,12 @@
                 android:id="@+id/activity_current_workout_tv_workoutTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/primaryLightColor"
                 android:gravity="center"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
                 android:text="PUSH 1A"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +53,7 @@
                 android:id="@+id/activity_current_workout_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:padding="5dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/activity_current_workout_tv_workoutTitle" />
@@ -77,15 +78,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="@color/primaryDarkColor"
                 android:text="Finish Workout"
                 android:textColor="#2469b3"
                 android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@id/activity_current_workout_btn_addExercise"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_current_workout_btn_addExercise" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

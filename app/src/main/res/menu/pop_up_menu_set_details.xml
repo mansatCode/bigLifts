@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/pop_up_menu_itm_warmUp"
+        android:icon="@drawable/ic_baseline_test"
+        android:title="Warm up"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/pop_up_menu_itm_dropSet"
+        android:icon="@drawable/ic_baseline_test"
+        android:title="Drop set"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/pop_up_menu_itm_failure"
+        android:icon="@drawable/ic_baseline_test"
+        android:title="Failure"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/pop_up_menu_itm_backOff"
+        android:icon="@drawable/ic_baseline_test"
+        android:title="Back off set"
+        app:showAsAction="never" />
+
+
+</menu>

@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.LogEntryModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
 import com.android.biglifts.utility.VerticalSpacingItemDecorator;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -132,6 +134,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         }
     }
 
+
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
@@ -149,7 +152,15 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 Toast.makeText(this, "Discard", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
-                //TODO - save workout to database. LogEntryModels only for now.
+                if (mExercisesList.isEmpty()) {
+                    Snackbar sb_EmptyWorkoutError = Snackbar.make(v, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
+                    sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryDarkColor));
+                    sb_EmptyWorkoutError.setTextColor(ContextCompat.getColor(this, R.color.white));
+                    sb_EmptyWorkoutError.show();
+                    return;
+                }
+
+                //TODO - save workout to database.
                 for (ExerciseModel e : mExercisesList) {
                     for (LogEntryModel l : e.getLogEntriesList()){
                         Log.d(TAG, l.toString());

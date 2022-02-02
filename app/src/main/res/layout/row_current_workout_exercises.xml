@@ -2,26 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/primaryDarkColor">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/primaryDarkColor">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_exercise_in_workout"
+            android:padding="5dp">
 
             <ImageView
                 android:id="@+id/row_current_workout_exercises_iv_tripleLines"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:background="@color/primaryDarkColor"
                 android:src="@drawable/ic_baseline_triple_line_24"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/black" />
+                app:tint="@color/primaryLightColor" />
 
             <View
                 android:id="@+id/row_current_workout_exercises_v_line"
@@ -33,15 +38,16 @@
 
             <TextView
                 android:id="@+id/row_current_workout_exercises_tv_exerciseName"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/primaryDarkColor"
+                android:gravity="center"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:text="Exercise Name"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/row_current_workout_exercises_v_line" />
 
             <ImageView
@@ -61,6 +67,7 @@
                 android:id="@+id/row_current_workout_exercises_cl_expandableLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/primaryDarkColor"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -83,7 +90,7 @@
                         android:text="Set"
                         android:textAllCaps="true"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/row_current_workout_exercises_tv_previous"
@@ -95,7 +102,7 @@
                         android:text="Previous"
                         android:textAllCaps="true"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/row_current_workout_exercises_tv_weight"
@@ -107,7 +114,7 @@
                         android:text="KG"
                         android:textAllCaps="true"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/row_current_workout_exercises_tv_reps"
@@ -119,7 +126,7 @@
                         android:text="Reps"
                         android:textAllCaps="true"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -140,12 +147,11 @@
 
                 <Button
                     android:id="@+id/row_current_workout_exercises_btn_addSet"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="12dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="12dp"
-                    android:backgroundTint="@color/black"
+                    android:backgroundTint="@color/primaryDarkColor"
                     android:text="Add Set"
                     android:textColor="#2469b3"
                     android:textSize="12sp"
