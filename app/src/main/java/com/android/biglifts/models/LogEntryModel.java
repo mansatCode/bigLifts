@@ -90,6 +90,10 @@ public class LogEntryModel {
         this.reps = reps;
     }
 
+    public void decrementSetNumber () {
+        setNumber--;
+    }
+
     @Override
     public String toString() {
         return "LogEntryModel{" +

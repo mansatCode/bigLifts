@@ -1,14 +1,12 @@
 package com.android.biglifts.adapters;
 
-import android.app.Activity;
-import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -16,10 +14,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.biglifts.CurrentWorkoutActivity;
 import com.android.biglifts.R;
 import com.android.biglifts.models.ExerciseModel;
-import com.android.biglifts.models.LogEntryModel;
 
 import java.util.ArrayList;
 
@@ -29,20 +25,27 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
 
     private ArrayList<ExerciseModel> mExercisesList;
     private OnExerciseInWorkoutListener mOnExerciseInWorkoutListener;
-//    private RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
     private CurrentWorkoutRecyclerAdapter mCurrentWorkoutRecyclerAdapter;
+    private Context mContext;
 
-    public CurrentWorkoutRecyclerAdapter(ArrayList<ExerciseModel> exerciseModels, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
+    public interface OnExerciseInWorkoutListener {
+        void onExerciseInWorkoutClick(int position, View view);
+
+        void deleteLogEntry(int logPosition, int exercisePosition);
+    }
+
+    public CurrentWorkoutRecyclerAdapter(ArrayList<ExerciseModel> exerciseModels, OnExerciseInWorkoutListener onExerciseInWorkoutListener, Context context) {
         this.mExercisesList = exerciseModels;
         this.mOnExerciseInWorkoutListener = onExerciseInWorkoutListener;
         mCurrentWorkoutRecyclerAdapter = this;
+        mContext = context;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_current_workout_exercises, parent, false);
-        return new ViewHolder(view, mOnExerciseInWorkoutListener);
+        return new ViewHolder(view, mOnExerciseInWorkoutListener, mContext);
     }
 
     @Override
@@ -57,27 +60,10 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
         // child RecyclerView is nested inside the parent RecyclerView, we use the following method
         layoutManager.setInitialPrefetchItemCount(exercise.getLogEntriesList().size());
 
-        // Create an instance of the child item view adapter and set its adapter, layout manager and RecyclerViewPool
-        SetRecyclerAdapter setRecyclerAdapter = new SetRecyclerAdapter(exercise.getLogEntriesList());
+        // Create an instance of the child item view adapter and set its adapter and layout manager
+        SetRecyclerAdapter setRecyclerAdapter = new SetRecyclerAdapter(exercise.getLogEntriesList(), mContext);
         holder.rv_logEntries.setLayoutManager(layoutManager);
         holder.rv_logEntries.setAdapter(setRecyclerAdapter);
-//        holder.rv_logEntries.setRecycledViewPool(viewPool);
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull  RecyclerView.ViewHolder viewHolder, int direction) {
-                //TODO - not quite right
-                Log.d(TAG, "onSwiped: " + String.valueOf(viewHolder.getBindingAdapterPosition()));
-                LogEntryModel logEntryModel = exercise.getLogEntriesList().get(viewHolder.getBindingAdapterPosition());
-                exercise.getLogEntriesList().remove(logEntryModel);
-                setRecyclerAdapter.notifyDataSetChanged();
-                mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
-            }
-        }).attachToRecyclerView(holder.rv_logEntries);
 
         boolean isExpanded = mExercisesList.get(position).isExpanded();
         holder.cl_expandableLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
@@ -95,9 +81,10 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
         ConstraintLayout cl_expandableLayout;
         RecyclerView rv_logEntries;
 
-        OnExerciseInWorkoutListener onExerciseInWorkoutListener;
+        private OnExerciseInWorkoutListener onExerciseInWorkoutListener;
+        private Context context;
 
-        public ViewHolder(@NonNull View itemView, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
+        public ViewHolder(@NonNull View itemView, OnExerciseInWorkoutListener onExerciseInWorkoutListener, Context context) {
             super(itemView);
             iv_expand = itemView.findViewById(R.id.row_current_workout_exercises_iv_tripleLines);
             iv_options = itemView.findViewById(R.id.row_current_workout_exercises_iv_options);
@@ -106,20 +93,29 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
             cl_expandableLayout = itemView.findViewById(R.id.row_current_workout_exercises_cl_expandableLayout);
             rv_logEntries = itemView.findViewById(R.id.row_current_workout_exercises_rv);
 
+            this.context = context;
             this.onExerciseInWorkoutListener = onExerciseInWorkoutListener;
 
             iv_expand.setOnClickListener(this);
             iv_options.setOnClickListener(this);
             btn_addSet.setOnClickListener(this);
+
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    onExerciseInWorkoutListener.deleteLogEntry(viewHolder.getBindingAdapterPosition(), getBindingAdapterPosition());
+                }
+            }).attachToRecyclerView(rv_logEntries);
         }
 
         @Override
         public void onClick(View view) {
             onExerciseInWorkoutListener.onExerciseInWorkoutClick(getBindingAdapterPosition(), view);
         }
-    }
-
-    public interface OnExerciseInWorkoutListener{
-        void onExerciseInWorkoutClick(int position, View view);
     }
 }

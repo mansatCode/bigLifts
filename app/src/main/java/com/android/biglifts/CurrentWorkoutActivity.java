@@ -85,7 +85,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mParentRecyclerView.setLayoutManager(linearLayoutManager);
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         mParentRecyclerView.addItemDecoration(itemDecorator);
-        mCurrentWorkoutRecyclerAdapter = new CurrentWorkoutRecyclerAdapter(mExercisesList, this);
+        mCurrentWorkoutRecyclerAdapter = new CurrentWorkoutRecyclerAdapter(mExercisesList, this, CurrentWorkoutActivity.this);
         mParentRecyclerView.setAdapter(mCurrentWorkoutRecyclerAdapter);
     }
 
@@ -116,6 +116,23 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void deleteLogEntry(int logPosition, int exercisePosition) {
+        ExerciseModel exerciseModel = mExercisesList.get(exercisePosition);
+        LogEntryModel logEntryModel = exerciseModel.getLogEntriesList().get(logPosition);
+
+        exerciseModel.getLogEntriesList().remove(logPosition);
+
+        if (exerciseModel.getLogEntriesList().isEmpty()) {
+            mExercisesList.remove(exerciseModel);
+            mCurrentWorkoutRecyclerAdapter.notifyItemRemoved(exercisePosition);
+        }
+        else {
+            mCurrentWorkoutRecyclerAdapter.notifyItemChanged(logPosition);
+            mParentRecyclerView.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.activity_current_workout_btn_addExercise:
@@ -139,21 +156,24 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                     }
                 }
 
+                // Loop through, check for unchecked LogEntryModels
+                for (ExerciseModel exerciseModel : mExercisesList) {
+                    // If unchecked, display message saying "You have unfinished sets"
+                    if (containsUnchecked(exerciseModel.getLogEntriesList())) {
+                        showUnsavedLogsDialog();
+                        return;
+                    }
+                }
 
-//                // Loop through, check for unchecked LogEntryModels
-//                for (ExerciseModel exerciseModel : mExercisesList) {
-//                    // If unchecked, display message saying "You have unfinished sets"
-//                    if (containsUnchecked(exerciseModel.getLogEntriesList())) {
-//                        showUnsavedLogsDialog();
-//                        return;
-//                    }
-//                }
-//
-//                insertWorkout();
-//
-//                Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
+                insertWorkout();
+                Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
+                endWorkout();
                 break;
         }
+    }
+
+    private void endWorkout() {
+        // this.finish();
     }
 
     private void insertWorkout() {
@@ -210,11 +230,27 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         builder.setPositiveButton("Finish workout", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO - cleanup unchecked logs
-
-
-
+                for (ExerciseModel exerciseModel : mExercisesList) {
+                    ArrayList<LogEntryModel> logsToRemove = new ArrayList<>();
+                    for (LogEntryModel logEntryModel : exerciseModel.getLogEntriesList()) {
+                        if (!logEntryModel.isChecked()) {
+                            if (logEntryModel.getReps() == 0) {
+                                // Logs that are unchecked and have 0 reps can be removed.
+                                logsToRemove.add(logEntryModel);
+                            }
+                            logEntryModel.setChecked(true); // Unnecessary this isChecked is not saved to the database
+                        }
+                    }
+                    for (LogEntryModel logEntryModel : logsToRemove) {
+                        exerciseModel.getLogEntriesList().remove(logEntryModel);
+                        int removedSet = logEntryModel.getSetNumber();
+                        exerciseModel.cleanLogEntries(removedSet);
+                    }
+                }
+                mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
+                mParentRecyclerView.getAdapter().notifyDataSetChanged();
                 insertWorkout();
+                endWorkout();
             }
         });
         builder.setNegativeButton("Go back", new DialogInterface.OnClickListener() {

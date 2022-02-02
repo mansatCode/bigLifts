@@ -61,6 +61,14 @@ public class ExerciseModel implements Parcelable {
         dest.writeString(category);
     }
 
+    public void cleanLogEntries (int removedSet) {
+        for (LogEntryModel logEntryModel : logEntriesList) {
+            if (logEntryModel.getSetNumber() > removedSet) {
+                logEntryModel.decrementSetNumber();
+            }
+        }
+    }
+
     public int getId() {
         return id;
     }

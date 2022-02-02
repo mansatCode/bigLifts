@@ -1,5 +1,6 @@
 package com.android.biglifts.adapters;
 
+import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -12,11 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.R;
-import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.LogEntryModel;
 
 import java.util.ArrayList;
@@ -26,68 +25,71 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
     private static final String TAG = "SetRecyclerAdapter";
 
     private ArrayList<LogEntryModel> mLogEntriesList;
+    private SetRecyclerAdapter mSetRecyclerAdapter;
+    private Context mContext;
 
     // Constructor
-    public SetRecyclerAdapter(ArrayList<LogEntryModel> logEntriesList)
-    {
+    public SetRecyclerAdapter(ArrayList<LogEntryModel> logEntriesList, Context context) {
         this.mLogEntriesList = logEntriesList;
+        mContext = context;
+        mSetRecyclerAdapter = this;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i)
-    {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         // Here we inflate the corresponding layout of the child item
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_add_set, viewGroup, false);
         // pass MyCustomEditTextListener to viewholder in onCreateViewHolder
         // so that we don't have to do this expensive allocation in onBindViewHolder
-        ViewHolder vh = new ViewHolder(view, new WeightListener(), new RepsListener());
+        ViewHolder vh = new ViewHolder(view, new WeightListener(), new RepsListener(), mContext);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SetRecyclerAdapter.ViewHolder holder, int position)
-    {
+    public void onBindViewHolder(@NonNull SetRecyclerAdapter.ViewHolder holder, int position) {
         // Create an instance of the ChildItem class for the given position
         LogEntryModel logEntry = mLogEntriesList.get(position);
-        logEntry.setSetNumber(holder.getBindingAdapterPosition()+1);
+        logEntry.setSetNumber(holder.getBindingAdapterPosition() + 1);
 
         // update MyCustomEditTextListener every time we bind a new item
         // so that it knows what item in mLogEntriesList to update
         holder.weightListener.updateLog(logEntry);
-        holder.repsListener.updateLog(logEntry);
+        holder.repsListener.updateLog(logEntry, position);
 
         holder.chk_confirmSet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (logEntry.getReps() == 0) {
+                    holder.chk_confirmSet.setChecked(false);
+                    isChecked = false;
+                }
                 logEntry.setChecked(isChecked);
             }
         });
 
         holder.tv_setNumber.setText(String.valueOf(logEntry.getSetNumber()));
+
         if (logEntry.getWeight() == 0) {
             holder.et_weight.setText("");
             holder.et_weight.setHint("0");
-        }
-        else {
+        } else {
             holder.et_weight.setText(String.valueOf(logEntry.getWeight()));
         }
 
         if (logEntry.getReps() == 0) {
             holder.et_reps.setText("");
             holder.et_reps.setHint("0");
-        }
-        else {
+            holder.chk_confirmSet.setChecked(false);
+        } else {
             holder.et_reps.setText(String.valueOf(logEntry.getReps()));
         }
 
         holder.chk_confirmSet.setChecked(logEntry.isChecked());
-        Log.d(TAG, "onBindViewHolder: " + logEntry.toString());
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         // This method returns the number of items we have added in the mLogEntriesList
         // i.e. the number of instances of the mLogEntriesList that have been created
         return mLogEntriesList.size();
@@ -110,11 +112,11 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
         EditText et_weight, et_reps;
         CheckBox chk_confirmSet;
 
+        private Context context;
         public WeightListener weightListener;
         public RepsListener repsListener;
 
-        public ViewHolder(View itemView,  WeightListener weightListener, RepsListener repsListener)
-        {
+        public ViewHolder(View itemView, WeightListener weightListener, RepsListener repsListener, Context context) {
             super(itemView);
             tv_setNumber = itemView.findViewById(R.id.row_add_set_tv_setNumber);
             tv_previousSetData = itemView.findViewById(R.id.row_add_set_tv_previousSetData);
@@ -122,6 +124,7 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
             et_reps = itemView.findViewById(R.id.row_add_set_et_reps);
             chk_confirmSet = itemView.findViewById(R.id.row_add_set_chk_confirmSet);
 
+            this.context = context;
             this.weightListener = weightListener;
             this.repsListener = repsListener;
         }
@@ -161,22 +164,19 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
         public void afterTextChanged(Editable editable) {
             if (editable.toString().length() != 0) {
                 log.setWeight(Integer.parseInt(editable.toString()));
-            }
-            else {
+            } else {
                 log.setWeight(0);
             }
-
-//            for (LogEntryModel l : mLogEntriesList) {
-//                Log.d(TAG, "onTextChanged: " + l.toString());
-//            }
         }
     }
 
     private class RepsListener implements TextWatcher {
         private LogEntryModel log;
+        private int position;
 
-        public void updateLog(LogEntryModel log) {
+        public void updateLog(LogEntryModel log, int position) {
             this.log = log;
+            this.position = position;
         }
 
         @Override
@@ -186,16 +186,17 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            // Should code go here or in afterTextChanged (?)
+
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
             if (editable.toString().length() != 0) {
                 log.setReps(Integer.parseInt(editable.toString()));
-            }
-            else {
+            } else {
                 log.setReps(0);
+                log.setChecked(false);
+                mSetRecyclerAdapter.notifyItemChanged(position);
             }
         }
     }
