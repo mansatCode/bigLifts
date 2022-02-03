@@ -3,25 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/pop_up_menu_set_details_itm_warmUp"
-        android:icon="@drawable/ic_baseline_test"
+        android:icon="@mipmap/ic_warm_up"
+        android:iconTint="@color/orange"
         android:title="Warm up"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/pop_up_menu_set_details_itm_dropSet"
-        android:icon="@drawable/ic_baseline_test"
+        android:icon="@mipmap/ic_drop_set"
+        android:iconTint="@color/purple_200"
         android:title="Drop set"
         app:showAsAction="never" />
     <item
         android:id="@+id/pop_up_menu_set_details_itm_failure"
-        android:icon="@drawable/ic_baseline_test"
+        android:icon="@mipmap/ic_failure"
+        android:iconTint="@color/red"
         android:title="Failure"
         app:showAsAction="never" />
     <item
         android:id="@+id/pop_up_menu__set_details_itm_backOff"
-        android:icon="@drawable/ic_baseline_test"
+        android:icon="@mipmap/ic_back_off"
+        android:iconTint="@color/blue"
         android:title="Back off set"
         app:showAsAction="never" />
-
-
 </menu>

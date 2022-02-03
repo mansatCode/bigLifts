@@ -12,10 +12,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/primaryDarkColor</item>
         <!-- Customize your theme here. -->
-        <item name="popupMenuStyle">@style/PopupMenu</item>
+        <item name="popupMenuStyle">@style/style_PopUpMenu_default</item>
     </style>
 
-    <style name="PopupMenu" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="style_PopUpMenu_default" parent="Widget.AppCompat.PopupMenu">
         <item name="android:popupBackground">@color/primaryLightColor</item>
         <item name="android:overlapAnchor">true</item>
         <item name="android:dropDownHorizontalOffset">0dp</item>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -81,7 +82,7 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                 updateSetDetailsTextView(holder.tv_setNumber, "W", ContextCompat.getColor(mContext, R.color.orange));
                 break;
             case LogEntryModel.DROP_SET:
-                updateSetDetailsTextView(holder.tv_setNumber, "D", ContextCompat.getColor(mContext, R.color.purple_700));
+                updateSetDetailsTextView(holder.tv_setNumber, "D", ContextCompat.getColor(mContext, R.color.purple_200));
                 break;
             case LogEntryModel.FAILURE_SET:
                 updateSetDetailsTextView(holder.tv_setNumber, "F", ContextCompat.getColor(mContext, R.color.red));
@@ -106,7 +107,6 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                 menuBuilder.setCallback(new MenuBuilder.Callback() {
                     @Override
                     public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
-                        // TODO - on same one selected,
                         if (logEntry.getR_setDetail_ID() == item.getItemId()) {
                             updateSetDetailsTextView(holder.tv_setNumber,  String.valueOf(logEntry.getSetNumber()), ContextCompat.getColor(mContext, R.color.white));
                             logEntry.setSetDetails(LogEntryModel.NORMAL_SET);
@@ -120,7 +120,7 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                                 logEntry.setR_setDetail_ID(R.id.pop_up_menu_set_details_itm_warmUp);
                                 return true;
                             case R.id.pop_up_menu_set_details_itm_dropSet:
-                                updateSetDetailsTextView(holder.tv_setNumber, "D", ContextCompat.getColor(mContext, R.color.purple_700));
+                                updateSetDetailsTextView(holder.tv_setNumber, "D", ContextCompat.getColor(mContext, R.color.purple_200));
                                 logEntry.setSetDetails(LogEntryModel.DROP_SET);
                                 logEntry.setR_setDetail_ID(R.id.pop_up_menu_set_details_itm_dropSet);
                                 return true;

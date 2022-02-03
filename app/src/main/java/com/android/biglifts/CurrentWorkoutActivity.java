@@ -1,10 +1,12 @@
 package com.android.biglifts;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,7 +119,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 break;
         }
-
     }
 
     private void clearFocus() {
@@ -148,7 +149,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     private void showOptionsPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+        PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.setGravity(Gravity.END);
         popupMenu.inflate(R.menu.pop_up_menu_exercise_in_workout);
         popupMenu.setOnMenuItemClickListener(this);

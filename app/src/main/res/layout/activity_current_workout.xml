@@ -43,7 +43,7 @@
                 android:gravity="center"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
-                android:text="PUSH 1A"
+                android:text="NEW WORKOUT"
                 android:textColor="@color/white"
                 android:textSize="28sp"
                 android:textStyle="bold"
