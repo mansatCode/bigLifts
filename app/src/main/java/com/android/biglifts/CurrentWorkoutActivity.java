@@ -16,11 +16,14 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +35,7 @@ import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class CurrentWorkoutActivity extends AppCompatActivity implements
         CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
@@ -89,6 +93,9 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mParentRecyclerView.addItemDecoration(itemDecorator);
         mCurrentWorkoutRecyclerAdapter = new CurrentWorkoutRecyclerAdapter(mExercisesList, this, CurrentWorkoutActivity.this);
         mParentRecyclerView.setAdapter(mCurrentWorkoutRecyclerAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(CurrentWorkoutActivityItemTouchHelperCallBack);
+        itemTouchHelper.attachToRecyclerView(mParentRecyclerView);
     }
 
     @Override
@@ -231,6 +238,26 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         return logEntryModelList;
     }
 
+    private void cleanLogEntriesList() {
+        for (ExerciseModel exerciseModel : mExercisesList) {
+            ArrayList<LogEntryModel> logsToRemove = new ArrayList<>();
+            for (LogEntryModel logEntryModel : exerciseModel.getLogEntriesList()) {
+                if (!logEntryModel.isChecked()) {
+                    if (logEntryModel.getReps() == 0) {
+                        // Logs that are unchecked and have 0 reps can be removed.
+                        logsToRemove.add(logEntryModel);
+                    }
+                    logEntryModel.setChecked(true); // Unnecessary this isChecked is not saved to the database
+                }
+            }
+            for (LogEntryModel logEntryModel : logsToRemove) {
+                exerciseModel.getLogEntriesList().remove(logEntryModel);
+                int removedSet = logEntryModel.getSetNumber();
+                exerciseModel.cleanLogEntries(removedSet);
+            }
+        }
+    }
+
     private void showUnsavedLogsDialog() {
         // Create an AlertDialog.Builder and set the message, and click listeners
         // for the positive and negative buttons on the dialog.
@@ -241,23 +268,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         builder.setPositiveButton("Finish workout", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                for (ExerciseModel exerciseModel : mExercisesList) {
-                    ArrayList<LogEntryModel> logsToRemove = new ArrayList<>();
-                    for (LogEntryModel logEntryModel : exerciseModel.getLogEntriesList()) {
-                        if (!logEntryModel.isChecked()) {
-                            if (logEntryModel.getReps() == 0) {
-                                // Logs that are unchecked and have 0 reps can be removed.
-                                logsToRemove.add(logEntryModel);
-                            }
-                            logEntryModel.setChecked(true); // Unnecessary this isChecked is not saved to the database
-                        }
-                    }
-                    for (LogEntryModel logEntryModel : logsToRemove) {
-                        exerciseModel.getLogEntriesList().remove(logEntryModel);
-                        int removedSet = logEntryModel.getSetNumber();
-                        exerciseModel.cleanLogEntries(removedSet);
-                    }
-                }
+                cleanLogEntriesList();
                 mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 mParentRecyclerView.getAdapter().notifyDataSetChanged();
                 insertWorkout();
@@ -275,4 +286,37 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+    //Move exercise in workout around
+    ItemTouchHelper.SimpleCallback CurrentWorkoutActivityItemTouchHelperCallBack = new ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            int fromPosition = viewHolder.getBindingAdapterPosition();
+            int toPosition = target.getBindingAdapterPosition();
+
+            Collections.swap(mExercisesList, fromPosition, toPosition);
+            mCurrentWorkoutRecyclerAdapter.notifyItemMoved(fromPosition, toPosition);
+            return false;
+        }
+
+        @Override
+        public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
+            super.onSelectedChanged(viewHolder, actionState);
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                Log.d(TAG, "onSelectedChanged: Change colour");
+                viewHolder.itemView.findViewById(R.id.row_current_workout_exercises_cl_container).setBackground(ContextCompat.getDrawable(viewHolder.itemView.getContext(), R.drawable.bg_highlighted_exercise_in_workout));
+            }
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            viewHolder.itemView.findViewById(R.id.row_current_workout_exercises_cl_container).setBackground(ContextCompat.getDrawable(viewHolder.itemView.getContext(), R.drawable.bg_exercise_in_workout));
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+        }
+    };
 }

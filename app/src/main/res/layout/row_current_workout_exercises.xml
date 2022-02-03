@@ -11,6 +11,7 @@
         app:cardBackgroundColor="@color/primaryDarkColor">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_current_workout_exercises_cl_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_exercise_in_workout"
@@ -21,12 +22,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/primaryDarkColor"
                 android:src="@drawable/ic_baseline_triple_line_24"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/primaryLightColor" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:id="@+id/row_current_workout_exercises_v_line"
@@ -42,10 +41,11 @@
                 android:layout_height="wrap_content"
                 android:background="@color/primaryDarkColor"
                 android:gravity="center"
+                android:hint="Exercise Name"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="Exercise Name"
                 android:textColor="@color/white"
+                android:textColorHint="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/row_current_workout_exercises_v_line" />
@@ -60,8 +60,7 @@
                 android:paddingRight="8dp"
                 android:src="@drawable/ic_baseline_options_24"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/row_current_workout_exercises_tv_exerciseName"
-                app:tint="@android:color/darker_gray" />
+                app:layout_constraintTop_toTopOf="@id/row_current_workout_exercises_tv_exerciseName" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/row_current_workout_exercises_cl_expandableLayout"

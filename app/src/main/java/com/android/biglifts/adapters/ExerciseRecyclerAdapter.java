@@ -13,7 +13,7 @@ import com.android.biglifts.models.ExerciseModel;
 
 import java.util.ArrayList;
 
-public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ViewHolder> {
+public class ExerciseRecyclerAdapter extends RecyclerView.Adapter<ExerciseRecyclerAdapter.ViewHolder> {
 
     public static final String EXTRA_EXERCISE_NAME = "com.android.biglifts.EXTRA_EXERCISE_NAME";
     public static final String EXTRA_EXERCISE_ID = "com.android.biglifts.EXTRA_EXERCISE_ID";
@@ -22,7 +22,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ViewHo
     private OnExerciseListener mOnExerciseListener;
     private Context mContext;
 
-    public ExerciseAdapter(Context context, ArrayList<ExerciseModel> exerciseList, OnExerciseListener onExerciseListener) {
+    public ExerciseRecyclerAdapter(Context context, ArrayList<ExerciseModel> exerciseList, OnExerciseListener onExerciseListener) {
         mContext = context;
         mExercisesList = exerciseList;
         mOnExerciseListener = onExerciseListener;

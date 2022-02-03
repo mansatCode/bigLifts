@@ -1,6 +1,7 @@
 package com.android.biglifts.adapters;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,8 @@ import com.android.biglifts.R;
 import com.android.biglifts.models.ExerciseModel;
 
 import java.util.ArrayList;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentWorkoutRecyclerAdapter.ViewHolder> {
 
@@ -100,7 +104,7 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
             iv_options.setOnClickListener(this);
             btn_addSet.setOnClickListener(this);
 
-            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
                 @Override
                 public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                     return false;
@@ -109,6 +113,18 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                     onExerciseInWorkoutListener.deleteLogEntry(viewHolder.getBindingAdapterPosition(), getBindingAdapterPosition());
+                }
+
+                @Override
+                public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                    new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                            .addBackgroundColor(ContextCompat.getColor(mContext, R.color.red))
+                            .addActionIcon(R.drawable.ic_baseline_delete_24)
+                            .create()
+                            .decorate();
+
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                 }
             }).attachToRecyclerView(rv_logEntries);
         }

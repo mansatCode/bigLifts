@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.biglifts.adapters.ExerciseAdapter;
+import com.android.biglifts.adapters.ExerciseRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
 import com.google.android.material.chip.ChipGroup;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExercisesFragment extends Fragment implements
-        ExerciseAdapter.OnExerciseListener {
+        ExerciseRecyclerAdapter.OnExerciseListener {
 
     public static final String EXTRA_EXERCISE_NAME = "com.android.biglifts.EXTRA_EXERCISE_NAME";
     public static final String EXTRA_EXERCISE_ID = "com.android.biglifts.EXTRA_EXERCISE_ID";
@@ -38,7 +38,7 @@ public class ExercisesFragment extends Fragment implements
     public Boolean mIsAddExerciseModeOn = false;
     private Context mContext;
     private BigLiftsRepository mBigLiftsRepository;
-    private ExerciseAdapter mExerciseAdapter;
+    private ExerciseRecyclerAdapter mExerciseRecyclerAdapter;
 
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
 
@@ -78,15 +78,15 @@ public class ExercisesFragment extends Fragment implements
                 if (exerciseModels != null) {
                     mExercisesList.addAll(exerciseModels);
                 }
-                mExerciseAdapter.notifyDataSetChanged();
+                mExerciseRecyclerAdapter.notifyDataSetChanged();
             }
         });
     }
 
     private void initRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        mExerciseAdapter = new ExerciseAdapter(mContext, mExercisesList, this);
-        mRecyclerView.setAdapter(mExerciseAdapter);
+        mExerciseRecyclerAdapter = new ExerciseRecyclerAdapter(mContext, mExercisesList, this);
+        mRecyclerView.setAdapter(mExerciseRecyclerAdapter);
     }
 
     @Override
