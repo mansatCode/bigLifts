@@ -114,25 +114,25 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                         }
 
                         switch(item.getItemId()) {
-                            case R.id.pop_up_menu_itm_warmUp:
+                            case R.id.pop_up_menu_set_details_itm_warmUp:
                                 updateSetDetailsTextView(holder.tv_setNumber, "W", ContextCompat.getColor(mContext, R.color.orange));
                                 logEntry.setSetDetails(LogEntryModel.WARM_UP_SET);
-                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_itm_warmUp);
+                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_set_details_itm_warmUp);
                                 return true;
-                            case R.id.pop_up_menu_itm_dropSet:
+                            case R.id.pop_up_menu_set_details_itm_dropSet:
                                 updateSetDetailsTextView(holder.tv_setNumber, "D", ContextCompat.getColor(mContext, R.color.purple_700));
                                 logEntry.setSetDetails(LogEntryModel.DROP_SET);
-                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_itm_dropSet);
+                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_set_details_itm_dropSet);
                                 return true;
-                            case R.id.pop_up_menu_itm_failure:
+                            case R.id.pop_up_menu_set_details_itm_failure:
                                 updateSetDetailsTextView(holder.tv_setNumber, "F", ContextCompat.getColor(mContext, R.color.red));
                                 logEntry.setSetDetails(LogEntryModel.FAILURE_SET);
-                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_itm_failure);
+                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_set_details_itm_failure);
                                 return true;
-                            case R.id.pop_up_menu_itm_backOff:
+                            case R.id.pop_up_menu__set_details_itm_backOff:
                                 updateSetDetailsTextView(holder.tv_setNumber, "B", ContextCompat.getColor(mContext, R.color.blue));
                                 logEntry.setSetDetails(LogEntryModel.BACK_OFF_SET);
-                                logEntry.setR_setDetail_ID(R.id.pop_up_menu_itm_backOff);
+                                logEntry.setR_setDetail_ID(R.id.pop_up_menu__set_details_itm_backOff);
                                 return true;
                             default:
                                 return false;

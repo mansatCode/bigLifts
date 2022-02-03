@@ -29,16 +29,20 @@ public class ExerciseModel implements Parcelable {
     @ColumnInfo(name = "category")
     private String category;
 
+    @ColumnInfo(name = "exerciseNote")
+    private String exerciseNote;
+
     @Ignore
     private boolean isExpanded = true;
 
     @Ignore
     private ArrayList<LogEntryModel> logEntriesList;
 
-    public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category) {
+    public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category, String exerciseNote) {
         this.exerciseName = exerciseName;
         this.bodyPart = bodyPart;
         this.category = category;
+        this.exerciseNote = exerciseNote;
         this.isExpanded = false;
     }
 
@@ -67,6 +71,14 @@ public class ExerciseModel implements Parcelable {
                 logEntryModel.decrementSetNumber();
             }
         }
+    }
+
+    public String getExerciseNote() {
+        return exerciseNote;
+    }
+
+    public void setExerciseNote(String exerciseNote) {
+        this.exerciseNote = exerciseNote;
     }
 
     public int getId() {

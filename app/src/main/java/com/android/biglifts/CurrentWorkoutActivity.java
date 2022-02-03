@@ -1,12 +1,12 @@
 package com.android.biglifts;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,13 +16,12 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,20 +38,22 @@ import java.util.Collections;
 
 public class CurrentWorkoutActivity extends AppCompatActivity implements
         CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
-        View.OnClickListener {
+        View.OnClickListener,
+        PopupMenu.OnMenuItemClickListener{
 
     private static final String TAG = "CurrentWorkoutActivity";
     public static final String EXTRA_EXERCISE = "com.android.biglifts.EXTRA_EXERCISE";
 
     // UI Components
     private RecyclerView mParentRecyclerView;
-    private ImageView mViewNotes, mRestTimer, mDiscardWorkout;
+    private ImageView mRestTimer, mDiscardWorkout;
     private Button mAddExercise, mFinishWorkout;
 
     // Variables
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
     private CurrentWorkoutRecyclerAdapter mCurrentWorkoutRecyclerAdapter;
     private BigLiftsRepository mBigLiftsRepository;
+    private ExerciseModel mExerciseSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private void initUI()
     {
         mParentRecyclerView = findViewById(R.id.activity_current_workout_rv);
-        mViewNotes = findViewById(R.id.toolbar_current_workout_iv_viewNote);
         mRestTimer = findViewById(R.id.toolbar_current_workout_iv_timer);
         mDiscardWorkout = findViewById(R.id.toolbar_current_workout_iv_discardWorkout);
         mAddExercise = findViewById(R.id.activity_current_workout_btn_addExercise);
@@ -78,7 +78,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
     private void setListeners()
     {
-        mViewNotes.setOnClickListener(this);
         mRestTimer.setOnClickListener(this);
         mDiscardWorkout.setOnClickListener(this);
         mAddExercise.setOnClickListener(this);
@@ -101,27 +100,59 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     @Override
     public void onExerciseInWorkoutClick(int position, View view) {
         ExerciseModel exercise = mExercisesList.get(position);
+        mExerciseSelected = exercise;
         switch(view.getId()) {
             case R.id.row_current_workout_exercises_iv_tripleLines:
-                View currentFocus = getCurrentFocus();
-                if (currentFocus != null) {
-                    currentFocus.clearFocus();
-                }
+                clearFocus();
                 exercise.setExpanded(!exercise.isExpanded());
                 mCurrentWorkoutRecyclerAdapter.notifyItemChanged(position);
                 break;
             case R.id.row_current_workout_exercises_iv_options:
-                Toast.makeText(this, "Options", Toast.LENGTH_SHORT).show();
+                showOptionsPopupMenu(view);
                 break;
             case R.id.row_current_workout_exercises_btn_addSet:
                 LogEntryModel log = new LogEntryModel();
                 log.setExerciseID(exercise.getId());
                 exercise.getLogEntriesList().add(log);
                 mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
-                Toast.makeText(this, "Add set", Toast.LENGTH_SHORT).show();
                 break;
         }
 
+    }
+
+    private void clearFocus() {
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            currentFocus.clearFocus();
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.pop_up_menu_exercise_in_workout_itm_addNote:
+                Toast.makeText(this, "Add note", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.pop_up_menu_exercise_in_workout_itm_viewNotes:
+                Toast.makeText(this, "View notes", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.pop_up_menu_exercise_in_workout_itm_remove:
+                clearFocus();
+                int index = mExercisesList.indexOf(mExerciseSelected);
+                mExercisesList.remove(mExerciseSelected);
+                mCurrentWorkoutRecyclerAdapter.notifyItemRemoved(index);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void showOptionsPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+        popupMenu.setGravity(Gravity.END);
+        popupMenu.inflate(R.menu.pop_up_menu_exercise_in_workout);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.show();
     }
 
     @Override
@@ -141,7 +172,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         }
     }
 
-
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
@@ -149,13 +179,12 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 Intent intent = new Intent(CurrentWorkoutActivity.this, SelectExerciseActivity.class);
                 mSelectExerciseActivity.launch(intent);
                 break;
-            case R.id.toolbar_current_workout_iv_viewNote:
-                Toast.makeText(this, "Notes", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.toolbar_current_workout_iv_timer:
                 Toast.makeText(this, "Rest timer", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
+                //TODO - Delete workout from database
+                // -Finish activity
                 Toast.makeText(this, "Discard", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
