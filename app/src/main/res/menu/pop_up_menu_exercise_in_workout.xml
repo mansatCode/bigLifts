@@ -2,9 +2,6 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/pop_up_menu_exercise_in_workout_itm_addNote"
-        android:title="Add note"
-        app:showAsAction="never"/>
     <item android:id="@+id/pop_up_menu_exercise_in_workout_itm_viewNotes"
         android:title="View notes"
         app:showAsAction="never"/>

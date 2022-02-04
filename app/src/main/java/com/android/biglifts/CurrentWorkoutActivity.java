@@ -1,17 +1,19 @@
 package com.android.biglifts;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -24,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +35,7 @@ import com.android.biglifts.adapters.CurrentWorkoutRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.LogEntryModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
+import com.android.biglifts.utility.BottomSheetRestTimerDialog;
 import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -41,7 +45,8 @@ import java.util.Collections;
 public class CurrentWorkoutActivity extends AppCompatActivity implements
         CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
         View.OnClickListener,
-        PopupMenu.OnMenuItemClickListener{
+        PopupMenu.OnMenuItemClickListener,
+        BottomSheetRestTimerDialog.BottomSheetRestTimerListener {
 
     private static final String TAG = "CurrentWorkoutActivity";
     public static final String EXTRA_EXERCISE = "com.android.biglifts.EXTRA_EXERCISE";
@@ -50,12 +55,15 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private RecyclerView mParentRecyclerView;
     private ImageView mRestTimer, mDiscardWorkout;
     private Button mAddExercise, mFinishWorkout;
+    private Chronometer mChronometer;
+    private TextView mRestTimerDisplay;
 
     // Variables
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
     private CurrentWorkoutRecyclerAdapter mCurrentWorkoutRecyclerAdapter;
     private BigLiftsRepository mBigLiftsRepository;
     private ExerciseModel mExerciseSelected;
+    private String mRestTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +75,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         setListeners();
         setSupportActionBar((Toolbar)findViewById(R.id.activity_current_workout_tb));
         initRecyclerView();
+        startChronometer();
     }
 
     private void initUI()
@@ -76,6 +85,18 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mDiscardWorkout = findViewById(R.id.toolbar_current_workout_iv_discardWorkout);
         mAddExercise = findViewById(R.id.activity_current_workout_btn_addExercise);
         mFinishWorkout = findViewById(R.id.activity_current_workout_btn_finishWorkout);
+        mChronometer = findViewById(R.id.toolbar_current_workout_chronometer);
+        mRestTimerDisplay = findViewById(R.id.toolbar_current_workout_tv_restTimer);
+        mRestTime = mRestTimerDisplay.getText().toString();
+    }
+
+    private void startChronometer() {
+        mChronometer.setBase(SystemClock.elapsedRealtime());
+        mChronometer.start();
+    }
+
+    private void pauseChronometer() {
+        mChronometer.stop();
     }
 
     private void setListeners()
@@ -131,9 +152,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.pop_up_menu_exercise_in_workout_itm_addNote:
-                Toast.makeText(this, "Add note", Toast.LENGTH_SHORT).show();
-                return true;
             case R.id.pop_up_menu_exercise_in_workout_itm_viewNotes:
                 Toast.makeText(this, "View notes", Toast.LENGTH_SHORT).show();
                 return true;
@@ -159,8 +177,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     @Override
     public void deleteLogEntry(int logPosition, int exercisePosition) {
         ExerciseModel exerciseModel = mExercisesList.get(exercisePosition);
-        LogEntryModel logEntryModel = exerciseModel.getLogEntriesList().get(logPosition);
-
         exerciseModel.getLogEntriesList().remove(logPosition);
 
         if (exerciseModel.getLogEntriesList().isEmpty()) {
@@ -182,6 +198,13 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 break;
             case R.id.toolbar_current_workout_iv_timer:
                 Toast.makeText(this, "Rest timer", Toast.LENGTH_SHORT).show();
+
+                BottomSheetRestTimerDialog restTimerBottomSheet = new BottomSheetRestTimerDialog();
+                Bundle bundleRestTimer = new Bundle();
+                bundleRestTimer.putString("Current rest time", mRestTime);
+                restTimerBottomSheet.setArguments(bundleRestTimer);
+                restTimerBottomSheet.show(getSupportFragmentManager(), "restTimerBottomSheet");
+
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
                 //TODO - Delete workout from database
@@ -213,18 +236,28 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                     }
                 }
 
-                insertWorkout();
+                insertLogEntries();
+                updateWorkout();
                 Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
                 endWorkout();
                 break;
         }
     }
 
+    @Override
+    public void onButtonInBottomSheetRestTimerClicked(String text) {
+
+    }
+
+    private void updateWorkout() {
+        pauseChronometer();
+    }
+
     private void endWorkout() {
         // this.finish();
     }
 
-    private void insertWorkout() {
+    private void insertLogEntries() {
         for (ExerciseModel exerciseModel : mExercisesList) {
             mBigLiftsRepository.insertLogEntries(exerciseModel.getLogEntriesList());
         }
@@ -301,7 +334,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 cleanLogEntriesList();
                 mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 mParentRecyclerView.getAdapter().notifyDataSetChanged();
-                insertWorkout();
+                insertLogEntries();
                 endWorkout();
             }
         });

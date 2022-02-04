@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageButton
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:id="@+id/toolbar_current_workout_iv_discardWorkout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="13dp"
@@ -22,10 +21,10 @@
         app:layout_constraintWidth_percent="0.15" />
 
     <ImageButton
-        android:background="?attr/selectableItemBackgroundBorderless"
         android:id="@+id/toolbar_current_workout_iv_timer"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="13dp"
@@ -35,12 +34,11 @@
         app:layout_constraintHeight_percent="1"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/toolbar_current_workout_tv_timer"
+    <Chronometer
+        android:id="@+id/toolbar_current_workout_chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/_00_00_00"
+        android:layout_marginStart="12dp"
         android:textColor="@color/white"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -48,15 +46,29 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/toolbar_current_workout_tv_restTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:text="00:00"
+        android:textColor="@color/blue"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar_current_workout_chronometer"
+        app:layout_constraintStart_toEndOf="@id/toolbar_current_workout_chronometer"
+        android:paddingBottom="4dp"/>
+
+    <TextView
         android:id="@+id/toolbar_current_workout_tv_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
         android:layout_marginBottom="4dp"
         android:text="@string/duration"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/toolbar_current_workout_tv_timer" />
+        app:layout_constraintStart_toStartOf="@id/toolbar_current_workout_chronometer" />
 
     <TextView
         android:id="@+id/toolbar_current_workout_tv_discard"
