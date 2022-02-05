@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.android.biglifts.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class BottomSheetRestTimerDialog extends BottomSheetDialogFragment implements View.OnClickListener {
@@ -74,7 +75,8 @@ public class BottomSheetRestTimerDialog extends BottomSheetDialogFragment implem
 
     private void resetTimer() {
         np_selectMinutes.setValue(Integer.parseInt(mRestTime.substring(0, 2)));
-        np_selectSeconds.setValue(Integer.parseInt(mSecondsArray[0]));
+        int index = Arrays.asList(mSecondsArray).indexOf(String.valueOf((mRestTimeInMilliseconds / 1000) % 60));
+        np_selectSeconds.setValue(index);
     }
 
     private void initUI(View view) {
