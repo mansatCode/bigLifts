@@ -26,7 +26,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +40,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 public class CurrentWorkoutActivity extends AppCompatActivity implements
         CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
@@ -50,6 +50,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
     private static final String TAG = "CurrentWorkoutActivity";
     public static final String EXTRA_EXERCISE = "com.android.biglifts.EXTRA_EXERCISE";
+    private static final String EXTRA_REST_TIME = "com.android.biglifts.EXTRA_REST_TIME";
+    private static final String EXTRA_BOTTOMSHEET_REST_TIMER_TAG = "com.android.biglifts.EXTRA_BOTTOMSHEET_REST_TIMER_TAG";
 
     // UI Components
     private RecyclerView mParentRecyclerView;
@@ -63,7 +65,10 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private CurrentWorkoutRecyclerAdapter mCurrentWorkoutRecyclerAdapter;
     private BigLiftsRepository mBigLiftsRepository;
     private ExerciseModel mExerciseSelected;
-    private String mRestTime;
+    private long mRestTimeInMilliseconds = 0;
+    private long mRestTimeInMillisecondsCopy;
+    private CountDownTimer mCountDownTimer;
+    private boolean mIsTimerRunning;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
         initUI();
         mBigLiftsRepository = new BigLiftsRepository(this);
+        mIsTimerRunning = false;
         setListeners();
         setSupportActionBar((Toolbar)findViewById(R.id.activity_current_workout_tb));
         initRecyclerView();
@@ -87,7 +93,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mFinishWorkout = findViewById(R.id.activity_current_workout_btn_finishWorkout);
         mChronometer = findViewById(R.id.toolbar_current_workout_chronometer);
         mRestTimerDisplay = findViewById(R.id.toolbar_current_workout_tv_restTimer);
-        mRestTime = mRestTimerDisplay.getText().toString();
     }
 
     private void startChronometer() {
@@ -197,14 +202,11 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 mSelectExerciseActivity.launch(intent);
                 break;
             case R.id.toolbar_current_workout_iv_timer:
-                Toast.makeText(this, "Rest timer", Toast.LENGTH_SHORT).show();
-
                 BottomSheetRestTimerDialog restTimerBottomSheet = new BottomSheetRestTimerDialog();
                 Bundle bundleRestTimer = new Bundle();
-                bundleRestTimer.putString("Current rest time", mRestTime);
+                bundleRestTimer.putLong(EXTRA_REST_TIME, mRestTimeInMillisecondsCopy);
                 restTimerBottomSheet.setArguments(bundleRestTimer);
-                restTimerBottomSheet.show(getSupportFragmentManager(), "restTimerBottomSheet");
-
+                restTimerBottomSheet.show(getSupportFragmentManager(), EXTRA_BOTTOMSHEET_REST_TIMER_TAG);
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
                 //TODO - Delete workout from database
@@ -245,8 +247,57 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onButtonInBottomSheetRestTimerClicked(String text) {
+    public void onButtonInBottomSheetRestTimerClicked(Boolean startTimer, long restTimeInMillis) {
+        // Start rest timer
+        if (startTimer) {
+            if (mIsTimerRunning) {
+                Toast.makeText(this, "Timer is already running!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            mRestTimeInMilliseconds = restTimeInMillis;
+            startRestTimer();
+            return;
+        }
+        resetRestTimer();
+    }
 
+    private void startRestTimer() {
+        mIsTimerRunning = true;
+        mRestTimeInMillisecondsCopy = mRestTimeInMilliseconds;
+
+        mCountDownTimer = new CountDownTimer(mRestTimeInMilliseconds, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mRestTimeInMilliseconds = millisUntilFinished;
+                updateRestTimerText();
+            }
+
+            @Override
+            public void onFinish() {
+                mIsTimerRunning = false;
+                //TODO - play sound to indicate rest timer is up.
+            }
+        }.start();
+    }
+
+    private void updateRestTimerText() {
+        int minutes = (int) (mRestTimeInMilliseconds / 1000) / 60;
+        int seconds = (int) (mRestTimeInMilliseconds / 1000) % 60;
+        String timeRemainingFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        mRestTimerDisplay.setText(timeRemainingFormatted);
+    }
+
+    private void resetRestTimer() {
+        if (!mIsTimerRunning) {
+            return;
+        }
+
+        mCountDownTimer.cancel();
+        mIsTimerRunning = false;
+        int minutes = (int) (mRestTimeInMillisecondsCopy / 1000) / 60;
+        int seconds = (int) (mRestTimeInMillisecondsCopy / 1000) % 60;
+        String timeRemainingFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        mRestTimerDisplay.setText(timeRemainingFormatted);
     }
 
     private void updateWorkout() {
