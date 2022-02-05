@@ -48,10 +48,17 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         PopupMenu.OnMenuItemClickListener,
         BottomSheetRestTimerDialog.BottomSheetRestTimerListener {
 
+    // Constants
     private static final String TAG = "CurrentWorkoutActivity";
     public static final String EXTRA_EXERCISE = "com.android.biglifts.EXTRA_EXERCISE";
-    private static final String EXTRA_REST_TIME = "com.android.biglifts.EXTRA_REST_TIME";
+    private static final String EXTRA_CURRENT_REST_TIME = "com.android.biglifts.EXTRA_CURRENT_REST_TIME";
+    private static final String EXTRA_DEFAULT_REST_TIME = "com.android.biglifts.EXTRA_DEFAULT_REST_TIME";
+    private static final String EXTRA_IS_TIMER_RUNNING = "com.android.biglifts.EXTRA_IS_TIMER_RUNNING";
     private static final String EXTRA_BOTTOMSHEET_REST_TIMER_TAG = "com.android.biglifts.EXTRA_BOTTOMSHEET_REST_TIMER_TAG";
+
+    private static final int START = 0;
+    private static final int PAUSE = 1;
+    private static final int RESET = 2;
 
     // UI Components
     private RecyclerView mParentRecyclerView;
@@ -66,7 +73,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private BigLiftsRepository mBigLiftsRepository;
     private ExerciseModel mExerciseSelected;
     private long mRestTimeInMilliseconds = 0;
-    private long mRestTimeInMillisecondsCopy;
+    private long mRestTimeInMillisecondsDefault = 0;
     private CountDownTimer mCountDownTimer;
     private boolean mIsTimerRunning;
 
@@ -204,7 +211,9 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
             case R.id.toolbar_current_workout_iv_timer:
                 BottomSheetRestTimerDialog restTimerBottomSheet = new BottomSheetRestTimerDialog();
                 Bundle bundleRestTimer = new Bundle();
-                bundleRestTimer.putLong(EXTRA_REST_TIME, mRestTimeInMillisecondsCopy);
+                bundleRestTimer.putLong(EXTRA_CURRENT_REST_TIME, mRestTimeInMilliseconds);
+                bundleRestTimer.putLong(EXTRA_DEFAULT_REST_TIME, mRestTimeInMillisecondsDefault);
+                bundleRestTimer.putBoolean(EXTRA_IS_TIMER_RUNNING, mIsTimerRunning);
                 restTimerBottomSheet.setArguments(bundleRestTimer);
                 restTimerBottomSheet.show(getSupportFragmentManager(), EXTRA_BOTTOMSHEET_REST_TIMER_TAG);
                 break;
@@ -247,23 +256,26 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onButtonInBottomSheetRestTimerClicked(Boolean startTimer, long restTimeInMillis) {
-        // Start rest timer
-        if (startTimer) {
-            if (mIsTimerRunning) {
-                Toast.makeText(this, "Timer is already running!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            mRestTimeInMilliseconds = restTimeInMillis;
-            startRestTimer();
-            return;
+    public void onButtonInBottomSheetRestTimerClicked(int timerState, long restTimeInMillis) {
+        switch (timerState) {
+            case START:
+                mRestTimeInMilliseconds = restTimeInMillis;
+                startRestTimer();
+                break;
+            case PAUSE:
+                mRestTimeInMilliseconds = restTimeInMillis;
+                pauseRestTimer();
+                break;
+            case RESET:
+                mRestTimeInMilliseconds = restTimeInMillis;
+                mRestTimeInMillisecondsDefault = restTimeInMillis;
+                resetRestTimer();
+                break;
         }
-        resetRestTimer();
     }
 
-    private void startRestTimer() {
+    public void startRestTimer() {
         mIsTimerRunning = true;
-        mRestTimeInMillisecondsCopy = mRestTimeInMilliseconds;
 
         mCountDownTimer = new CountDownTimer(mRestTimeInMilliseconds, 1000) {
             @Override
@@ -283,21 +295,21 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private void updateRestTimerText() {
         int minutes = (int) (mRestTimeInMilliseconds / 1000) / 60;
         int seconds = (int) (mRestTimeInMilliseconds / 1000) % 60;
-        String timeRemainingFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        mRestTimerDisplay.setText(timeRemainingFormatted);
+        mRestTimerDisplay.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
 
     private void resetRestTimer() {
         if (!mIsTimerRunning) {
+            updateRestTimerText();
             return;
         }
+        pauseRestTimer();
+    }
 
+    private void pauseRestTimer() {
         mCountDownTimer.cancel();
         mIsTimerRunning = false;
-        int minutes = (int) (mRestTimeInMillisecondsCopy / 1000) / 60;
-        int seconds = (int) (mRestTimeInMillisecondsCopy / 1000) % 60;
-        String timeRemainingFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-        mRestTimerDisplay.setText(timeRemainingFormatted);
+        updateRestTimerText();
     }
 
     private void updateWorkout() {

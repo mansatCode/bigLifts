@@ -21,6 +21,7 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.biglifts.CurrentWorkoutActivity;
 import com.android.biglifts.R;
 import com.android.biglifts.models.LogEntryModel;
 
@@ -71,6 +72,9 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                     isChecked = false;
                 }
                 logEntry.setChecked(isChecked);
+                if (isChecked) {
+                    ((CurrentWorkoutActivity) mContext).startRestTimer();
+                }
             }
         });
 
