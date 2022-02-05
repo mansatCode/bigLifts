@@ -149,7 +149,10 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 LogEntryModel log = new LogEntryModel();
                 log.setExerciseID(exercise.getId());
                 exercise.getLogEntriesList().add(log);
-                mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
+                int index = mExercisesList.indexOf(exercise);
+                clearFocus();
+                mCurrentWorkoutRecyclerAdapter.notifyItemChanged(index);
+                //mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 break;
         }
     }
@@ -287,6 +290,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
             @Override
             public void onFinish() {
                 mIsTimerRunning = false;
+                mRestTimeInMilliseconds = mRestTimeInMillisecondsDefault;
                 //TODO - play sound to indicate rest timer is up.
             }
         }.start();
@@ -298,12 +302,21 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mRestTimerDisplay.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
 
-    private void resetRestTimer() {
+    public void resetRestTimer() {
         if (!mIsTimerRunning) {
             updateRestTimerText();
             return;
         }
         pauseRestTimer();
+    }
+
+    public void clearRestTimer() {
+        if (mIsTimerRunning) {
+            mCountDownTimer.cancel();
+            mIsTimerRunning = false;
+            mRestTimerDisplay.setText("00:00");
+            mRestTimeInMilliseconds = mRestTimeInMillisecondsDefault;
+        }
     }
 
     private void pauseRestTimer() {

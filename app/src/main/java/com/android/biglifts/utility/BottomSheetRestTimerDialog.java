@@ -153,7 +153,6 @@ public class BottomSheetRestTimerDialog extends BottomSheetDialogFragment implem
     }
 
     private void startTimer() {
-        mRestTimeInMillisecondsDefault = mRestTimeInMilliseconds;
         mCountDownTimer = new CountDownTimer(mRestTimeInMilliseconds, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {

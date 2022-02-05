@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -73,7 +74,11 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                 }
                 logEntry.setChecked(isChecked);
                 if (isChecked) {
+                    ((CurrentWorkoutActivity) mContext).clearRestTimer();
                     ((CurrentWorkoutActivity) mContext).startRestTimer();
+                }
+                else {
+                    ((CurrentWorkoutActivity) mContext).clearRestTimer();
                 }
             }
         });
@@ -290,6 +295,7 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
             } else {
                 log.setReps(0);
                 log.setChecked(false);
+                ((CurrentWorkoutActivity) mContext).clearRestTimer();
                 mSetRecyclerAdapter.notifyItemChanged(position);
             }
         }
