@@ -7,22 +7,21 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "tblLogEntry", foreignKeys = {@ForeignKey(entity = ExerciseModel.class,
+@Entity(tableName = "tblLogEntry", foreignKeys = {@ForeignKey(entity = ExerciseWorkoutLinkModel.class,
         parentColumns = "id",
-        childColumns = "exerciseID")})
+        childColumns = "exerciseWorkoutLinkID")})
 public class LogEntryModel {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     @NonNull
-    private int exerciseID;
+    private long exerciseWorkoutLinkID;
 
     @NonNull
     private int setNumber;
 
     @NonNull
-    @ColumnInfo(defaultValue = "0")
     private int setDetails;
 
     @NonNull
@@ -42,8 +41,8 @@ public class LogEntryModel {
         checked = false;
     }
 
-    public LogEntryModel(int exerciseID, int setNumber, int weight, int reps, int setDetails) {
-        this.exerciseID = exerciseID;
+    public LogEntryModel(long exerciseWorkoutLinkID, int setNumber, int weight, int reps, int setDetails) {
+        this.exerciseWorkoutLinkID = exerciseWorkoutLinkID;
         this.setNumber = setNumber;
         this.weight = weight;
         this.reps = reps;
@@ -83,12 +82,12 @@ public class LogEntryModel {
         this.id = id;
     }
 
-    public int getExerciseID() {
-        return exerciseID;
+    public long getExerciseWorkoutLinkID() {
+        return exerciseWorkoutLinkID;
     }
 
-    public void setExerciseID(int exerciseID) {
-        this.exerciseID = exerciseID;
+    public void setExerciseWorkoutLinkID(long exerciseWorkoutLinkID) {
+        this.exerciseWorkoutLinkID = exerciseWorkoutLinkID;
     }
 
     public int getSetNumber() {
@@ -129,7 +128,7 @@ public class LogEntryModel {
     public String toString() {
         return "LogEntryModel{" +
                 "id=" + id +
-                ", exerciseID=" + exerciseID +
+                ", exerciseWorkoutLinkID=" + exerciseWorkoutLinkID +
                 ", setNumber=" + setNumber +
                 ", setDetails=" + setDetails +
                 ", weight=" + weight +

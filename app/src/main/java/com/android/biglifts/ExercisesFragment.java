@@ -69,7 +69,7 @@ public class ExercisesFragment extends Fragment implements
     }
 
     private void retrieveAllExercises() {
-        mBigLiftsRepository.retrieveAllExercisesTask().observe(getViewLifecycleOwner(), new Observer<List<ExerciseModel>>() {
+        mBigLiftsRepository.getAllExercisesTask().observe(getViewLifecycleOwner(), new Observer<List<ExerciseModel>>() {
             @Override
             public void onChanged(List<ExerciseModel> exerciseModels) {
                 if (mExercisesList.size() > 0) {

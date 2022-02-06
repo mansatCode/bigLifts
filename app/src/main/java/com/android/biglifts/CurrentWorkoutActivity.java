@@ -3,10 +3,6 @@ package com.android.biglifts;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -30,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,7 +34,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.biglifts.adapters.CurrentWorkoutRecyclerAdapter;
 import com.android.biglifts.adapters.SetRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
+import com.android.biglifts.models.ExerciseWorkoutLinkModel;
 import com.android.biglifts.models.LogEntryModel;
+import com.android.biglifts.models.WorkoutModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
 import com.android.biglifts.utility.BottomSheetExerciseNoteDialog;
 import com.android.biglifts.utility.BottomSheetRestTimerDialog;
@@ -45,7 +44,9 @@ import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 public class CurrentWorkoutActivity extends AppCompatActivity implements
@@ -75,10 +76,11 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private ImageView mRestTimer, mDiscardWorkout;
     private Button mAddExercise, mFinishWorkout;
     private Chronometer mChronometer;
-    private TextView mRestTimerDisplay;
+    private TextView mRestTimerDisplay, mWorkoutTitle;
 
     // Variables
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
+    private ArrayList<ExerciseWorkoutLinkModel> mExerciseWorkoutLinksList = new ArrayList<>();
     private CurrentWorkoutRecyclerAdapter mCurrentWorkoutRecyclerAdapter;
     private BigLiftsRepository mBigLiftsRepository;
     private ExerciseModel mExerciseSelected;
@@ -86,6 +88,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private long mRestTimeInMillisecondsDefault = 0;
     private CountDownTimer mCountDownTimer;
     private boolean mIsTimerRunning;
+    private WorkoutModel mCurrentWorkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +102,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         setSupportActionBar((Toolbar)findViewById(R.id.activity_current_workout_tb));
         initRecyclerView();
         startChronometer();
+        insertWorkout();
     }
 
     private void initUI()
@@ -110,15 +114,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mFinishWorkout = findViewById(R.id.activity_current_workout_btn_finishWorkout);
         mChronometer = findViewById(R.id.toolbar_current_workout_chronometer);
         mRestTimerDisplay = findViewById(R.id.toolbar_current_workout_tv_restTimer);
-    }
-
-    private void startChronometer() {
-        mChronometer.setBase(SystemClock.elapsedRealtime());
-        mChronometer.start();
-    }
-
-    private void pauseChronometer() {
-        mChronometer.stop();
+        mWorkoutTitle = findViewById(R.id.activity_current_workout_tv_workoutTitle);
     }
 
     private void setListeners()
@@ -142,6 +138,54 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         itemTouchHelper.attachToRecyclerView(mParentRecyclerView);
     }
 
+    private void startChronometer() {
+        mChronometer.setBase(SystemClock.elapsedRealtime());
+        mChronometer.start();
+    }
+
+    private void pauseChronometer() {
+        mChronometer.stop();
+    }
+
+    private void insertWorkout() {
+        mCurrentWorkout = new WorkoutModel();
+        mCurrentWorkout.setWorkoutName(mWorkoutTitle.getText().toString());
+        mCurrentWorkout.setWorkoutDate(Calendar.getInstance());
+        mBigLiftsRepository.insertWorkout(mCurrentWorkout);
+    }
+
+    private void updateWorkout() {
+        pauseChronometer();
+        long workoutDurationMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
+        mCurrentWorkout.setWorkoutName(mWorkoutTitle.getText().toString());
+        mCurrentWorkout.setWorkoutDuration(workoutDurationMillis);
+        mBigLiftsRepository.updateWorkout(mCurrentWorkout);
+    }
+
+    private void finishWorkout() {
+        // finish();
+    }
+
+    private void discardWorkout() {
+        // TODO - delete workout. Delete any database entries with this workoutID too.
+        // mBigLiftsRepository.deleleteWorkout(mCurrentWorkout);
+    }
+
+    private void clearFocus() {
+        View currentFocus = getCurrentFocus();
+        if (currentFocus != null) {
+            currentFocus.clearFocus();
+        }
+    }
+
+    private void showOptionsPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.setGravity(Gravity.END);
+        popupMenu.inflate(R.menu.pop_up_menu_exercise_in_workout);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.show();
+    }
+
     @Override
     public void onExerciseInWorkoutClick(int position, View view) {
         ExerciseModel exercise = mExercisesList.get(position);
@@ -157,19 +201,11 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 break;
             case R.id.row_current_workout_exercises_btn_addSet:
                 LogEntryModel log = new LogEntryModel();
-                log.setExerciseID(exercise.getId());
                 exercise.getLogEntriesList().add(log);
                 int index = mExercisesList.indexOf(exercise);
                 clearFocus();
                 mCurrentWorkoutRecyclerAdapter.notifyItemChanged(index);
                 break;
-        }
-    }
-
-    private void clearFocus() {
-        View currentFocus = getCurrentFocus();
-        if (currentFocus != null) {
-            currentFocus.clearFocus();
         }
     }
 
@@ -179,7 +215,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
             case R.id.pop_up_menu_exercise_in_workout_itm_viewNotes:
                 BottomSheetExerciseNoteDialog exerciseNoteBottomSheet = new BottomSheetExerciseNoteDialog();
                 Bundle bundleData = new Bundle();
-                Log.d(TAG, "onMenuItemClick: " + mExerciseSelected.getExerciseNote());
                 bundleData.putString(EXTRA_EXERCISE_NOTE, mExerciseSelected.getExerciseNote());
                 exerciseNoteBottomSheet.setArguments(bundleData);
                 exerciseNoteBottomSheet.show(getSupportFragmentManager(), EXTRA_BOTTOMSHEET_EXERCISE_NOTE_TAG);
@@ -204,12 +239,23 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         Log.d(TAG, mExerciseSelected.toString());
     }
 
-    private void showOptionsPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.setGravity(Gravity.END);
-        popupMenu.inflate(R.menu.pop_up_menu_exercise_in_workout);
-        popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.show();
+    @Override
+    public void onButtonInBottomSheetRestTimerClicked(int timerState, long restTimeInMillis) {
+        switch (timerState) {
+            case START:
+                mRestTimeInMilliseconds = restTimeInMillis;
+                startRestTimer();
+                break;
+            case PAUSE:
+                mRestTimeInMilliseconds = restTimeInMillis;
+                pauseRestTimer();
+                break;
+            case RESET:
+                mRestTimeInMilliseconds = restTimeInMillis;
+                mRestTimeInMillisecondsDefault = restTimeInMillis;
+                resetRestTimer();
+                break;
+        }
     }
 
     @Override
@@ -244,9 +290,10 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 restTimerBottomSheet.show(getSupportFragmentManager(), EXTRA_BOTTOMSHEET_REST_TIMER_TAG);
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
-                //TODO - Delete workout from database
-                // -Finish activity
+                //TODO - Finish activity
+                discardWorkout();
                 Toast.makeText(this, "Discard", Toast.LENGTH_SHORT).show();
+                // finish();
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
                 if (mExercisesList.isEmpty()) {
@@ -258,6 +305,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 }
 
                 //TODO - save workout to database.
+                updateWorkout();
+
                 for (ExerciseModel e : mExercisesList) {
                     for (LogEntryModel l : e.getLogEntriesList()){
                         Log.d(TAG, l.toString());
@@ -274,28 +323,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 }
 
                 insertLogEntries();
-                updateWorkout();
                 Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
-                endWorkout();
-                break;
-        }
-    }
-
-    @Override
-    public void onButtonInBottomSheetRestTimerClicked(int timerState, long restTimeInMillis) {
-        switch (timerState) {
-            case START:
-                mRestTimeInMilliseconds = restTimeInMillis;
-                startRestTimer();
-                break;
-            case PAUSE:
-                mRestTimeInMilliseconds = restTimeInMillis;
-                pauseRestTimer();
-                break;
-            case RESET:
-                mRestTimeInMilliseconds = restTimeInMillis;
-                mRestTimeInMillisecondsDefault = restTimeInMillis;
-                resetRestTimer();
+                finishWorkout();
                 break;
         }
     }
@@ -315,7 +344,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 mIsTimerRunning = false;
                 mRestTimeInMilliseconds = mRestTimeInMillisecondsDefault;
                 //TODO - play sound to indicate rest timer is up.
-
             }
         }.start();
     }
@@ -349,18 +377,29 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         updateRestTimerText();
     }
 
-    private void updateWorkout() {
-        pauseChronometer();
-    }
+    private void assignExerciseWorkoutLinkIDs() {
+        // Assign each LogEntryModel its ExerciseWorkoutLinkID
+        for (ExerciseModel exerciseModel : mExercisesList) {
+            for (LogEntryModel logEntryModel : exerciseModel.getLogEntriesList()) {
 
-    private void endWorkout() {
-        // this.finish();
+                for (ExerciseWorkoutLinkModel exerciseWorkoutLinkModel : mExerciseWorkoutLinksList) {
+                    if (exerciseWorkoutLinkModel.getExerciseID() == exerciseModel.getId()) {
+                        logEntryModel.setExerciseWorkoutLinkID(exerciseWorkoutLinkModel.getId());
+                        break;
+                    }
+                }
+
+            }
+        }
     }
 
     private void insertLogEntries() {
+        assignExerciseWorkoutLinkIDs();
+
         for (ExerciseModel exerciseModel : mExercisesList) {
             mBigLiftsRepository.insertLogEntries(exerciseModel.getLogEntriesList());
         }
+        Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
     }
 
     private boolean containsUnchecked(ArrayList<LogEntryModel> logEntriesList) {
@@ -396,9 +435,36 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private ArrayList<LogEntryModel> LogEntryModelList(int exerciseID) {
         ArrayList<LogEntryModel> logEntryModelList = new ArrayList<>();
         LogEntryModel log = new LogEntryModel();
-        log.setExerciseID(exerciseID);
         logEntryModelList.add(log);
+
+        // Insert the ExerciseWorkoutLink
+        ExerciseWorkoutLinkModel exerciseWorkoutLink = new ExerciseWorkoutLinkModel();
+        exerciseWorkoutLink.setExerciseID(exerciseID);
+        exerciseWorkoutLink.setWorkoutID(mCurrentWorkout.getId());
+        mBigLiftsRepository.insertExerciseWorkoutLink(exerciseWorkoutLink);
+        retrieveExerciseWorkoutLinks();
         return logEntryModelList;
+    }
+
+    private void retrieveExerciseWorkoutLinks() {
+
+        mBigLiftsRepository.getExerciseWorkoutLinksByWorkoutID(mCurrentWorkout.getId()).observe(this, new Observer<List<ExerciseWorkoutLinkModel>>() {
+            @Override
+            public void onChanged(List<ExerciseWorkoutLinkModel> exerciseWorkoutLinkModels) {
+                if (mExerciseWorkoutLinksList.size() > 0) {
+                    mExerciseWorkoutLinksList.clear();
+                }
+                if (exerciseWorkoutLinkModels != null) {
+                    mExerciseWorkoutLinksList.addAll(exerciseWorkoutLinkModels);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        discardWorkout();
     }
 
     private void cleanLogEntriesList() {
@@ -435,7 +501,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 mParentRecyclerView.getAdapter().notifyDataSetChanged();
                 insertLogEntries();
-                endWorkout();
+                finishWorkout();
             }
         });
         builder.setNegativeButton("Go back", new DialogInterface.OnClickListener() {
@@ -467,7 +533,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
             super.onSelectedChanged(viewHolder, actionState);
             if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
-                Log.d(TAG, "onSelectedChanged: Change colour");
                 viewHolder.itemView.findViewById(R.id.row_current_workout_exercises_cl_container).setBackground(ContextCompat.getDrawable(viewHolder.itemView.getContext(), R.drawable.bg_highlighted_exercise_in_workout));
             }
         }
@@ -484,13 +549,9 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     };
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     public void onSetInWorkoutClick() {
-        Log.d(TAG, "onSetInWorkoutClick: COMPLETE SET SOUND PLAYED");
+        // TODO - add sound.
+        Log.d(TAG, "TODO - play completed set sound.");
 
     }
 }

@@ -18,18 +18,14 @@ public class ExerciseModel implements Parcelable {
     private int id;
 
     @NonNull
-    @ColumnInfo(name = "exerciseName")
     private String exerciseName;
 
     @NonNull
-    @ColumnInfo(name = "bodyPart")
     private String bodyPart;
 
     @NonNull
-    @ColumnInfo(name = "category")
     private String category;
 
-    @ColumnInfo(name = "exerciseNote")
     private String exerciseNote;
 
     @Ignore
