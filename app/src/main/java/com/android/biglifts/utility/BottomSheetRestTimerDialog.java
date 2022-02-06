@@ -114,8 +114,6 @@ public class BottomSheetRestTimerDialog extends BottomSheetDialogFragment implem
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bottom_sheet_timer_tv_timer:
-                Log.d(TAG, "onClick: " + String.valueOf(np_selectSeconds.getValue()));
-                Log.d(TAG, "onClick: " + String.valueOf(np_selectMinutes.getValue()));
                 ll_startTimerContainer.setVisibility(View.GONE);
                 cl_setTimeContainer.setVisibility(View.VISIBLE);
                 break;

@@ -3,6 +3,10 @@ package com.android.biglifts;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
@@ -31,9 +35,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.adapters.CurrentWorkoutRecyclerAdapter;
+import com.android.biglifts.adapters.SetRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.LogEntryModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
+import com.android.biglifts.utility.BottomSheetExerciseNoteDialog;
 import com.android.biglifts.utility.BottomSheetRestTimerDialog;
 import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 import com.google.android.material.snackbar.Snackbar;
@@ -46,7 +52,9 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         CurrentWorkoutRecyclerAdapter.OnExerciseInWorkoutListener,
         View.OnClickListener,
         PopupMenu.OnMenuItemClickListener,
-        BottomSheetRestTimerDialog.BottomSheetRestTimerListener {
+        BottomSheetRestTimerDialog.BottomSheetRestTimerListener,
+        BottomSheetExerciseNoteDialog.BottomSheetExerciseNoteListener,
+        SetRecyclerAdapter.OnSetInWorkoutListener {
 
     // Constants
     private static final String TAG = "CurrentWorkoutActivity";
@@ -55,6 +63,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private static final String EXTRA_DEFAULT_REST_TIME = "com.android.biglifts.EXTRA_DEFAULT_REST_TIME";
     private static final String EXTRA_IS_TIMER_RUNNING = "com.android.biglifts.EXTRA_IS_TIMER_RUNNING";
     private static final String EXTRA_BOTTOMSHEET_REST_TIMER_TAG = "com.android.biglifts.EXTRA_BOTTOMSHEET_REST_TIMER_TAG";
+    private static final String EXTRA_BOTTOMSHEET_EXERCISE_NOTE_TAG = "com.android.biglifts.EXTRA_BOTTOMSHEET_EXERCISE_NOTE_TAG";
+    private static final String EXTRA_EXERCISE_NOTE = "com.android.biglifts.EXTRA_EXERCISE_NOTE";
 
     private static final int START = 0;
     private static final int PAUSE = 1;
@@ -152,7 +162,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 int index = mExercisesList.indexOf(exercise);
                 clearFocus();
                 mCurrentWorkoutRecyclerAdapter.notifyItemChanged(index);
-                //mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 break;
         }
     }
@@ -168,7 +177,12 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.pop_up_menu_exercise_in_workout_itm_viewNotes:
-                Toast.makeText(this, "View notes", Toast.LENGTH_SHORT).show();
+                BottomSheetExerciseNoteDialog exerciseNoteBottomSheet = new BottomSheetExerciseNoteDialog();
+                Bundle bundleData = new Bundle();
+                Log.d(TAG, "onMenuItemClick: " + mExerciseSelected.getExerciseNote());
+                bundleData.putString(EXTRA_EXERCISE_NOTE, mExerciseSelected.getExerciseNote());
+                exerciseNoteBottomSheet.setArguments(bundleData);
+                exerciseNoteBottomSheet.show(getSupportFragmentManager(), EXTRA_BOTTOMSHEET_EXERCISE_NOTE_TAG);
                 return true;
             case R.id.pop_up_menu_exercise_in_workout_itm_remove:
                 clearFocus();
@@ -179,6 +193,15 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
             default:
                 return false;
         }
+    }
+
+    @Override
+    public void onButtonInBottomSheetExerciseNoteListenerClicked(String updatedNote) {
+        mExerciseSelected.setExerciseNote(updatedNote);
+        clearFocus();
+        int index = mExercisesList.indexOf(mExerciseSelected);
+        mCurrentWorkoutRecyclerAdapter.notifyItemChanged(index);
+        Log.d(TAG, mExerciseSelected.toString());
     }
 
     private void showOptionsPopupMenu(View view) {
@@ -228,7 +251,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
             case R.id.activity_current_workout_btn_finishWorkout:
                 if (mExercisesList.isEmpty()) {
                     Snackbar sb_EmptyWorkoutError = Snackbar.make(v, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
-                    sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryDarkColor));
+                    sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
                     sb_EmptyWorkoutError.setTextColor(ContextCompat.getColor(this, R.color.white));
                     sb_EmptyWorkoutError.show();
                     return;
@@ -292,6 +315,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 mIsTimerRunning = false;
                 mRestTimeInMilliseconds = mRestTimeInMillisecondsDefault;
                 //TODO - play sound to indicate rest timer is up.
+
             }
         }.start();
     }
@@ -458,4 +482,15 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onSetInWorkoutClick() {
+        Log.d(TAG, "onSetInWorkoutClick: COMPLETE SET SOUND PLAYED");
+
+    }
 }

@@ -159,6 +159,7 @@ public class ExerciseModel implements Parcelable {
                 ", exerciseName='" + exerciseName + '\'' +
                 ", bodyPart='" + bodyPart + '\'' +
                 ", category='" + category + '\'' +
+                ", exerciseNote='" + exerciseNote + '\'' +
                 ", isExpanded=" + isExpanded +
                 ", logEntriesList=" + logEntriesList +
                 '}';

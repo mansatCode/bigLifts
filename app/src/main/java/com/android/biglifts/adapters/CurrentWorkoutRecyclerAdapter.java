@@ -65,7 +65,7 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
         layoutManager.setInitialPrefetchItemCount(exercise.getLogEntriesList().size());
 
         // Create an instance of the child item view adapter and set its adapter and layout manager
-        SetRecyclerAdapter setRecyclerAdapter = new SetRecyclerAdapter(exercise.getLogEntriesList(), mContext);
+        SetRecyclerAdapter setRecyclerAdapter = new SetRecyclerAdapter(exercise.getLogEntriesList(), mContext, (SetRecyclerAdapter.OnSetInWorkoutListener) mContext);
         holder.rv_logEntries.setLayoutManager(layoutManager);
         holder.rv_logEntries.setAdapter(setRecyclerAdapter);
 

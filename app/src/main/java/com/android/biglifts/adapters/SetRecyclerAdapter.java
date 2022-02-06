@@ -4,8 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,12 +33,18 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
     private ArrayList<LogEntryModel> mLogEntriesList;
     private SetRecyclerAdapter mSetRecyclerAdapter;
     private Context mContext;
+    private OnSetInWorkoutListener mOnSetInWorkoutListener;
 
     // Constructor
-    public SetRecyclerAdapter(ArrayList<LogEntryModel> logEntriesList, Context context) {
+    public SetRecyclerAdapter(ArrayList<LogEntryModel> logEntriesList, Context context, OnSetInWorkoutListener onSetInWorkoutListener) {
         this.mLogEntriesList = logEntriesList;
         mContext = context;
         mSetRecyclerAdapter = this;
+        mOnSetInWorkoutListener = onSetInWorkoutListener;
+    }
+
+    public interface OnSetInWorkoutListener {
+        void onSetInWorkoutClick();
     }
 
     @NonNull
@@ -76,14 +80,14 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                 if (isChecked) {
                     ((CurrentWorkoutActivity) mContext).clearRestTimer();
                     ((CurrentWorkoutActivity) mContext).startRestTimer();
-                }
-                else {
+                    mOnSetInWorkoutListener.onSetInWorkoutClick();
+                } else {
                     ((CurrentWorkoutActivity) mContext).clearRestTimer();
                 }
             }
         });
 
-        switch(logEntry.getSetDetails()){
+        switch (logEntry.getSetDetails()) {
             case LogEntryModel.NORMAL_SET:
                 updateSetDetailsTextView(holder.tv_setNumber, String.valueOf(logEntry.getSetNumber()), ContextCompat.getColor(mContext, R.color.white));
                 break;
@@ -117,12 +121,12 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
                     @Override
                     public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
                         if (logEntry.getR_setDetail_ID() == item.getItemId()) {
-                            updateSetDetailsTextView(holder.tv_setNumber,  String.valueOf(logEntry.getSetNumber()), ContextCompat.getColor(mContext, R.color.white));
+                            updateSetDetailsTextView(holder.tv_setNumber, String.valueOf(logEntry.getSetNumber()), ContextCompat.getColor(mContext, R.color.white));
                             logEntry.setSetDetails(LogEntryModel.NORMAL_SET);
                             return true;
                         }
 
-                        switch(item.getItemId()) {
+                        switch (item.getItemId()) {
                             case R.id.pop_up_menu_set_details_itm_warmUp:
                                 updateSetDetailsTextView(holder.tv_setNumber, "W", ContextCompat.getColor(mContext, R.color.orange));
                                 logEntry.setSetDetails(LogEntryModel.WARM_UP_SET);
@@ -176,7 +180,7 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
         holder.chk_confirmSet.setChecked(logEntry.isChecked());
     }
 
-    private void updateSetDetailsTextView (TextView tv_setNumber, String displayText, int colour) {
+    private void updateSetDetailsTextView(TextView tv_setNumber, String displayText, int colour) {
         tv_setNumber.setTextColor(colour);
         tv_setNumber.setText(displayText);
     }
@@ -197,7 +201,6 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
     public void onViewDetachedFromWindow(@NonNull SetRecyclerAdapter.ViewHolder holder) {
         ((ViewHolder) holder).disableListeners();
     }
-
 
 
     // This class is to initialize the Views present in the child RecyclerView
@@ -236,7 +239,6 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
             et_reps.removeTextChangedListener(repsListener);
         }
     }
-
 
 
     // we make TextWatcher to be aware of the LogModel it currently works with.
