@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,7 +57,7 @@ public class ExercisesFragment extends Fragment implements
         retrieveAllExercises();
 
         if (mIsAddExerciseModeOn) {
-            ConstraintLayout cl_container = getView().findViewById(R.id.fragment_exercises_cl_container);
+            CoordinatorLayout cl_container = getView().findViewById(R.id.fragment_exercises_cdl_container);
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) cl_container.getLayoutParams();
             params.bottomMargin = 0;
             cl_container.setLayoutParams(params);

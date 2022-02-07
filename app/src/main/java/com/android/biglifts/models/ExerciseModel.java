@@ -33,7 +33,7 @@ public class ExerciseModel implements Parcelable {
     private int isVisible;
 
     @Ignore
-    private boolean isExpanded = true;
+    private boolean isExpanded;
 
     @Ignore
     private ArrayList<LogEntryModel> logEntriesList;
