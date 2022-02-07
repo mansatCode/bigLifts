@@ -7,9 +7,7 @@
     android:background="@color/primaryDarkColor"
     tools:context=".CurrentWorkoutActivity">
 
-    <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -28,7 +26,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,7 +70,7 @@
                 android:backgroundTint="@color/primaryDarkColor"
                 android:text="+ Add Exercise"
                 android:textColor="#2469b3"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/activity_current_workout_rv" />
 
             <Button
@@ -87,7 +85,7 @@
                 android:backgroundTint="@color/primaryDarkColor"
                 android:text="Finish Workout"
                 android:textColor="#2469b3"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/activity_current_workout_btn_addExercise" />
 

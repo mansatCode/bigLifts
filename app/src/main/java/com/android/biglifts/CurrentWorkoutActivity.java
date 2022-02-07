@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -132,7 +131,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mParentRecyclerView.setLayoutManager(linearLayoutManager);
-        VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
+        VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(15);
         mParentRecyclerView.addItemDecoration(itemDecorator);
         mCurrentWorkoutRecyclerAdapter = new CurrentWorkoutRecyclerAdapter(mExercisesList, this, CurrentWorkoutActivity.this);
         mParentRecyclerView.setAdapter(mCurrentWorkoutRecyclerAdapter);
@@ -184,15 +183,13 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     private void finishWorkout() {
-        // finish();
+        finish();
     }
 
     private void discardWorkout() {
         // TODO - Delete any database entries with this workoutID too.
-        long currentWorkoutID = mCurrentWorkout.getId();
         mBigLiftsRepository.deleteExerciseWorkoutLinks(mExerciseWorkoutLinksList);
         mBigLiftsRepository.deleleteWorkout(mCurrentWorkout);
-        // mBigLiftsRepository.deleteExerciseWorkoutLinksByWorkoutID(currentWorkoutID);
     }
 
     private void clearFocus() {
@@ -320,17 +317,14 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 restTimerBottomSheet.show(getSupportFragmentManager(), EXTRA_BOTTOMSHEET_REST_TIMER_TAG);
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
-                //TODO - Finish activity
                 discardWorkout();
-                Toast.makeText(this, "Discard", Toast.LENGTH_SHORT).show();
-                // finish();
+                finishWorkout();
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
                 if (!validateWorkout()) {
                     return;
                 }
 
-                //TODO - save workout to database.
                 updateWorkout();
 
                 // Loop through, check for unchecked LogEntryModels
@@ -496,6 +490,11 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         discardWorkout();
     }
 
+    @Override
+    public void onBackPressed() {
+        showUnsavedWorkoutDialog();
+    }
+
     private void cleanLogEntriesList() {
         for (ExerciseModel exerciseModel : mExercisesList) {
             ArrayList<LogEntryModel> logsToRemove = new ArrayList<>();
@@ -545,6 +544,28 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         alertDialog.show();
     }
 
+    private void showUnsavedWorkoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you finished?");
+        builder.setMessage("Current workout will be discarded!");
+
+        builder.setPositiveButton("Cancel workout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                CurrentWorkoutActivity.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     //Move exercise in workout around
     ItemTouchHelper.SimpleCallback CurrentWorkoutActivityItemTouchHelperCallBack = new ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
@@ -581,6 +602,5 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     public void onSetInWorkoutClick() {
         // TODO - add sound.
         Log.d(TAG, "TODO - play completed set sound.");
-
     }
 }

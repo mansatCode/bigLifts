@@ -25,8 +25,8 @@ public interface ExerciseDao {
     @Delete
     void deleteExercises(List<ExerciseModel> exerciseModels);
 
-    @Query("SELECT * FROM tblExercise")
-    LiveData<List<ExerciseModel>> getAllExercises();
+    @Query("SELECT * FROM tblExercise ORDER BY exerciseName ASC")
+    LiveData<List<ExerciseModel>> getAllExercisesOrderedAlphabetically();
 
     @Query("SELECT * FROM tblExercise WHERE id = :id")
     LiveData<ExerciseModel> getExerciseById(int id);

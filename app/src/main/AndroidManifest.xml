@@ -14,6 +14,9 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".CurrentWorkoutActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".StartNewWorkoutActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

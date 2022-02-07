@@ -50,13 +50,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
+        android:paddingBottom="4dp"
         android:text="00:00"
         android:textColor="@color/blue"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/toolbar_current_workout_chronometer"
-        app:layout_constraintStart_toEndOf="@id/toolbar_current_workout_chronometer"
-        android:paddingBottom="4dp"/>
+        app:layout_constraintStart_toEndOf="@id/toolbar_current_workout_chronometer" />
 
     <TextView
         android:id="@+id/toolbar_current_workout_tv_duration"
@@ -66,7 +66,7 @@
         android:layout_marginBottom="4dp"
         android:text="@string/duration"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/toolbar_current_workout_chronometer" />
 
@@ -78,7 +78,7 @@
         android:gravity="center"
         android:text="@string/discard"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/toolbar_current_workout_iv_discardWorkout"
         app:layout_constraintRight_toRightOf="@id/toolbar_current_workout_iv_discardWorkout"
@@ -92,7 +92,7 @@
         android:gravity="center"
         android:text="@string/rest"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/toolbar_current_workout_iv_timer"
         app:layout_constraintRight_toRightOf="@id/toolbar_current_workout_iv_timer"

@@ -5,7 +5,7 @@
     <string name="discard">Discard</string>
     <string name="rest">Rest</string>
     <string name="notes">Notes</string>
-    
+
     <string-array name="BottomSheetRestTimerDialog_SecondsArray">
         <item>0</item>
         <item>5</item>

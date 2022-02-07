@@ -28,17 +28,22 @@ public class ExerciseModel implements Parcelable {
 
     private String exerciseNote;
 
+    @NonNull
+    @ColumnInfo(defaultValue = "1")
+    private int isVisible;
+
     @Ignore
     private boolean isExpanded = true;
 
     @Ignore
     private ArrayList<LogEntryModel> logEntriesList;
 
-    public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category, String exerciseNote) {
+    public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category, int isVisible, String exerciseNote) {
         this.exerciseName = exerciseName;
         this.bodyPart = bodyPart;
         this.category = category;
         this.exerciseNote = exerciseNote;
+        this.isVisible = isVisible;
         this.isExpanded = false;
     }
 
@@ -47,6 +52,8 @@ public class ExerciseModel implements Parcelable {
         this.isExpanded = false;
     }
 
+    public static final int VISIBLE_FALSE = 0;
+    public static final int VISIBLE_TRUE = 1;
 
     @Override
     public int describeContents() {
@@ -59,6 +66,8 @@ public class ExerciseModel implements Parcelable {
         dest.writeString(exerciseName);
         dest.writeString(bodyPart);
         dest.writeString(category);
+        dest.writeString(exerciseNote);
+        dest.writeInt(isVisible);
     }
 
     public void cleanLogEntries (int removedSet) {
@@ -67,6 +76,14 @@ public class ExerciseModel implements Parcelable {
                 logEntryModel.decrementSetNumber();
             }
         }
+    }
+
+    public int getIsVisible() {
+        return isVisible;
+    }
+
+    public void setIsVisible(int isVisible) {
+        this.isVisible = isVisible;
     }
 
     public String getExerciseNote() {
@@ -133,7 +150,8 @@ public class ExerciseModel implements Parcelable {
         exerciseName = in.readString();
         bodyPart = in.readString();
         category = in.readString();
-        isExpanded = in.readByte() != 0;
+        exerciseNote = in.readString();
+        isVisible = in.readInt();
     }
 
     public static final Creator<ExerciseModel> CREATOR = new Creator<ExerciseModel>() {
