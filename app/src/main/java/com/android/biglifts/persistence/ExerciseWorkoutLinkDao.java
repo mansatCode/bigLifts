@@ -28,4 +28,7 @@ public interface ExerciseWorkoutLinkDao {
 
     @Query("SELECT * FROM tblExerciseWorkoutLink WHERE workoutID = :workoutID")
     LiveData<List<ExerciseWorkoutLinkModel>> getExerciseWorkoutLinkByWorkoutID(long workoutID);
+
+    @Query("DELETE FROM tblExerciseWorkoutLink WHERE workoutID = :workoutID")
+    void deleteExerciseWorkoutLinksByWorkoutID(long workoutID);
 }

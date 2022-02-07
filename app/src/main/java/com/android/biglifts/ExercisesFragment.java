@@ -105,6 +105,7 @@ public class ExercisesFragment extends Fragment implements
     @Override
     public void onClick(int position) {
         if (mIsAddExerciseModeOn) {
+            // Send the ExerciseModel to the workout activity
             Intent result = new Intent();
             result.putExtra(EXTRA_EXERCISE, mExercisesList.get(position));
             getActivity().setResult(Activity.RESULT_OK, result);

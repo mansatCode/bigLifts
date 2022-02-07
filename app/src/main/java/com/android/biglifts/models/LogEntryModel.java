@@ -1,7 +1,6 @@
 package com.android.biglifts.models;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
@@ -34,7 +33,7 @@ public class LogEntryModel {
     private boolean checked;
 
     @Ignore
-    private int R_setDetail_ID = -1;
+    private int setDetailRID = -1;
 
     @Ignore
     public LogEntryModel() {
@@ -50,12 +49,12 @@ public class LogEntryModel {
         checked = false;
     }
 
-    public int getR_setDetail_ID() {
-        return R_setDetail_ID;
+    public int getSetDetailRID() {
+        return setDetailRID;
     }
 
-    public void setR_setDetail_ID(int r_setDetail_ID) {
-        R_setDetail_ID = r_setDetail_ID;
+    public void setSetDetailRID(int setDetailRID) {
+        this.setDetailRID = setDetailRID;
     }
 
     public int getSetDetails() {

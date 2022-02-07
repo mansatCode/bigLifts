@@ -117,6 +117,20 @@ public class BigLiftsRepository {
         return mBigLiftsDatabase.getExerciseWorkoutLinkDao().getExerciseWorkoutLinkByWorkoutID(workoutID);
     }
 
+    public void deleteExerciseWorkoutLinksByWorkoutID(long workoutID) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseWorkoutLinkDao().deleteExerciseWorkoutLinksByWorkoutID(workoutID))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    public void deleteExerciseWorkoutLinks(List<ExerciseWorkoutLinkModel> exerciseWorkoutLinkModels) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseWorkoutLinkDao().deleteExerciseWorkoutLinks(exerciseWorkoutLinkModels))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
     //endregion
 
     //region tblLogEntry Methods

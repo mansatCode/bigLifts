@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.SystemClock;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,7 +78,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private ImageView mRestTimer, mDiscardWorkout;
     private Button mAddExercise, mFinishWorkout;
     private Chronometer mChronometer;
-    private TextView mRestTimerDisplay, mWorkoutTitle;
+    private TextView mRestTimerDisplay;
+    private EditText mWorkoutTitle;
 
     // Variables
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
@@ -114,7 +117,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mFinishWorkout = findViewById(R.id.activity_current_workout_btn_finishWorkout);
         mChronometer = findViewById(R.id.toolbar_current_workout_chronometer);
         mRestTimerDisplay = findViewById(R.id.toolbar_current_workout_tv_restTimer);
-        mWorkoutTitle = findViewById(R.id.activity_current_workout_tv_workoutTitle);
+        mWorkoutTitle = findViewById(R.id.activity_current_workout_et_workoutTitle);
     }
 
     private void setListeners()
@@ -154,6 +157,24 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mBigLiftsRepository.insertWorkout(mCurrentWorkout);
     }
 
+    private boolean validateWorkout() {
+        if (mExercisesList.isEmpty()) {
+            Snackbar sb_EmptyWorkoutError = Snackbar.make(mWorkoutTitle, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
+            sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
+            sb_EmptyWorkoutError.setTextColor(ContextCompat.getColor(this, R.color.white));
+            sb_EmptyWorkoutError.show();
+            return false;
+        }
+        else if (mWorkoutTitle.getText().toString().trim().isEmpty()) {
+            Snackbar sb_EmptyWorkoutTitleError = Snackbar.make(mWorkoutTitle, "Workout needs a title.", Snackbar.LENGTH_LONG);
+            sb_EmptyWorkoutTitleError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
+            sb_EmptyWorkoutTitleError.setTextColor(ContextCompat.getColor(this, R.color.white));
+            sb_EmptyWorkoutTitleError.show();
+            return false;
+        }
+        return true;
+    }
+
     private void updateWorkout() {
         pauseChronometer();
         long workoutDurationMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
@@ -167,8 +188,11 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     private void discardWorkout() {
-        // TODO - delete workout. Delete any database entries with this workoutID too.
-        // mBigLiftsRepository.deleleteWorkout(mCurrentWorkout);
+        // TODO - Delete any database entries with this workoutID too.
+        long currentWorkoutID = mCurrentWorkout.getId();
+        mBigLiftsRepository.deleteExerciseWorkoutLinks(mExerciseWorkoutLinksList);
+        mBigLiftsRepository.deleleteWorkout(mCurrentWorkout);
+        // mBigLiftsRepository.deleteExerciseWorkoutLinksByWorkoutID(currentWorkoutID);
     }
 
     private void clearFocus() {
@@ -176,6 +200,10 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         if (currentFocus != null) {
             currentFocus.clearFocus();
         }
+    }
+
+    private void clearWorkoutTitleFocus() {
+        mWorkoutTitle.clearFocus();
     }
 
     private void showOptionsPopupMenu(View view) {
@@ -188,6 +216,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
     @Override
     public void onExerciseInWorkoutClick(int position, View view) {
+        clearWorkoutTitleFocus();
         ExerciseModel exercise = mExercisesList.get(position);
         mExerciseSelected = exercise;
         switch(view.getId()) {
@@ -275,6 +304,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
+        clearWorkoutTitleFocus();
         switch(v.getId()) {
             case R.id.activity_current_workout_btn_addExercise:
                 Intent intent = new Intent(CurrentWorkoutActivity.this, SelectExerciseActivity.class);
@@ -296,22 +326,12 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 // finish();
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
-                if (mExercisesList.isEmpty()) {
-                    Snackbar sb_EmptyWorkoutError = Snackbar.make(v, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
-                    sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
-                    sb_EmptyWorkoutError.setTextColor(ContextCompat.getColor(this, R.color.white));
-                    sb_EmptyWorkoutError.show();
+                if (!validateWorkout()) {
                     return;
                 }
 
                 //TODO - save workout to database.
                 updateWorkout();
-
-                for (ExerciseModel e : mExercisesList) {
-                    for (LogEntryModel l : e.getLogEntriesList()){
-                        Log.d(TAG, l.toString());
-                    }
-                }
 
                 // Loop through, check for unchecked LogEntryModels
                 for (ExerciseModel exerciseModel : mExercisesList) {
@@ -323,7 +343,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 }
 
                 insertLogEntries();
-                Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
                 finishWorkout();
                 break;
         }
@@ -419,9 +438,19 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent intent = result.getData();
                             if (intent.hasExtra(EXTRA_EXERCISE)) {
-                                ExerciseModel exercise = intent.getParcelableExtra(EXTRA_EXERCISE);
-                                exercise.setLogEntriesList(LogEntryModelList(exercise.getId()));
-                                mExercisesList.add(exercise);
+                                ExerciseModel newExercise = intent.getParcelableExtra(EXTRA_EXERCISE);
+                                int newExerciseID = newExercise.getId();
+                                for (ExerciseModel exerciseModel : mExercisesList) {
+                                    if (newExerciseID == exerciseModel.getId()) {
+                                        Snackbar sb_DuplicateExerciseError = Snackbar.make(mWorkoutTitle, "Exercise already present in workout.", Snackbar.LENGTH_LONG);
+                                        sb_DuplicateExerciseError.setBackgroundTint(ContextCompat.getColor(CurrentWorkoutActivity.this, R.color.primaryLightColor));
+                                        sb_DuplicateExerciseError.setTextColor(ContextCompat.getColor(CurrentWorkoutActivity.this, R.color.white));
+                                        sb_DuplicateExerciseError.show();
+                                        return;
+                                    }
+                                }
+                                newExercise.setLogEntriesList(LogEntryModelList(newExercise.getId()));
+                                mExercisesList.add(newExercise);
                                 mCurrentWorkoutRecyclerAdapter.notifyItemInserted(mExercisesList.size());
                             } else {
                                 Log.e(TAG, "onActivityResult: ERROR HAS OCCURRED");
