@@ -20,7 +20,7 @@ public interface ExerciseDao {
     void insertExercises(List<ExerciseModel> exerciseModels);
 
     @Update
-    void updateExercises(List<ExerciseModel> exerciseModels);
+    void updateExercise(ExerciseModel exerciseModel);
 
     @Delete
     void deleteExercises(List<ExerciseModel> exerciseModels);

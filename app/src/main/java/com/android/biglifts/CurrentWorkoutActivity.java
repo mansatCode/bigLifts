@@ -261,8 +261,9 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mExerciseSelected.setExerciseNote(updatedNote);
         clearFocus();
         int index = mExercisesList.indexOf(mExerciseSelected);
+        // TODO - update exercise
+        mBigLiftsRepository.updateExercise(mExerciseSelected);
         mCurrentWorkoutRecyclerAdapter.notifyItemChanged(index);
-        Log.d(TAG, mExerciseSelected.toString());
     }
 
     @Override

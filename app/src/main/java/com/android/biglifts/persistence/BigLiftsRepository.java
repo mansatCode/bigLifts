@@ -44,8 +44,8 @@ public class BigLiftsRepository {
                  */
     }
 
-    public void updateExercises(List<ExerciseModel> exerciseModels) {
-        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseDao().updateExercises(exerciseModels))
+    public void updateExercise(ExerciseModel exerciseModel) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseDao().updateExercise(exerciseModel))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();

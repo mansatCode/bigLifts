@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primaryDarkColor"
-    tools:context=".CurrentWorkoutActivity">
+    tools:context=".CurrentWorkoutActivity"
+    android:layout_marginBottom="?attr/actionBarSize">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -44,7 +45,7 @@
                 android:paddingBottom="16dp"
                 android:text="NEW WORKOUT"
                 android:textColor="@color/white"
-                android:textSize="28sp"
+                android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
