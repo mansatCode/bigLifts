@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.android.biglifts.fragments.ExercisesFragment;
+
 public class SelectExerciseActivity extends AppCompatActivity {
 
     public static final String EXTRA_ADD_EXERCISE_MODE_ON = "com.android.biglifts.EXTRA_ADD_EXERCISE_MODE_ON";

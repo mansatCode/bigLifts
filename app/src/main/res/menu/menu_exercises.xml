@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_exercises_addExercise"
+        android:id="@+id/menu_exercises_itm_addExercise"
         android:title="Add exercise"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_exercises_search"
+        android:id="@+id/menu_exercises_itm_search"
         android:icon="@drawable/ic_baseline_search_24"
         app:showAsAction="ifRoom|collapseActionView"
         android:title="Search"

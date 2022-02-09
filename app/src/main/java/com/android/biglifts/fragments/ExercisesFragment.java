@@ -1,10 +1,9 @@
-package com.android.biglifts;
+package com.android.biglifts.fragments;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,17 +11,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.biglifts.R;
+import com.android.biglifts.SelectExerciseActivity;
+import com.android.biglifts.SpecificExerciseActivity;
 import com.android.biglifts.adapters.ExerciseRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
@@ -34,7 +36,8 @@ import java.util.List;
 
 public class ExercisesFragment extends Fragment implements
         ExerciseRecyclerAdapter.OnExerciseListener,
-        ChipGroup.OnCheckedChangeListener {
+        ChipGroup.OnCheckedChangeListener,
+        Toolbar.OnMenuItemClickListener {
 
     public static final String EXTRA_EXERCISE_NAME = "com.android.biglifts.EXTRA_EXERCISE_NAME";
     public static final String EXTRA_EXERCISE_ID = "com.android.biglifts.EXTRA_EXERCISE_ID";
@@ -80,10 +83,13 @@ public class ExercisesFragment extends Fragment implements
         mRecyclerView = view.findViewById(R.id.fragment_exercises_rv);
         mChipGroup = view.findViewById(R.id.fragment_exercises_cg);
         mToolbar = view.findViewById(R.id.fragment_exercises_tb);
+        setHasOptionsMenu(true);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
     }
 
     private void setListeners() {
         mChipGroup.setOnCheckedChangeListener(this);
+        mToolbar.setOnMenuItemClickListener(this);
     }
 
     private void retrieveAllExercises() {
@@ -122,18 +128,20 @@ public class ExercisesFragment extends Fragment implements
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_exercises, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.menu_exercises_search);
-        androidx.appcompat.widget.SearchView searchView = (androidx.appcompat.widget.SearchView) searchItem.getActionView();
+        MenuItem searchItem = menu.findItem(R.id.menu_exercises_itm_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
         //Change search icon on keyboard from magnifying glass to tick
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) { return false; }
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -154,9 +162,13 @@ public class ExercisesFragment extends Fragment implements
             getActivity().setResult(Activity.RESULT_OK, result);
             getActivity().finish();
         } else {
-            // Fragment stuff... see mansatLifts
+            Intent intent = new Intent(mContext, SpecificExerciseActivity.class);
+            intent.putExtra(EXTRA_EXERCISE_NAME, mExercisesList.get(position).getExerciseName());
+            intent.putExtra(EXTRA_EXERCISE_ID, (long) mExercisesList.get(position).getId());
+            mContext.startActivity(intent);
         }
     }
+
 
     @Override
     public void onCheckedChanged(ChipGroup group, int checkedId) {
@@ -166,6 +178,16 @@ public class ExercisesFragment extends Fragment implements
         }
         Chip chip = getView().findViewById(checkedId);
         mExerciseRecyclerAdapter.getFilter().filter(chip.getText());
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_exercises_itm_addExercise:
+                Toast.makeText(mContext, "add", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return false;
     }
 }
 

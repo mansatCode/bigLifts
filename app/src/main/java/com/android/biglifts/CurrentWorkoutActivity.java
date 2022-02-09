@@ -90,6 +90,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private long mRestTimeInMillisecondsDefault = 0;
     private CountDownTimer mCountDownTimer;
     private boolean mIsTimerRunning;
+    private boolean mIsWorkoutValid = false;
     private WorkoutModel mCurrentWorkout;
 
     @Override
@@ -176,6 +177,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
     private void updateWorkout() {
         pauseChronometer();
+        mIsWorkoutValid = true;
         long workoutDurationMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
         mCurrentWorkout.setWorkoutName(mWorkoutTitle.getText().toString());
         mCurrentWorkout.setWorkoutDuration(workoutDurationMillis);
@@ -610,5 +612,13 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     public void onSetInWorkoutClick() {
         // TODO - add sound.
         Log.d(TAG, "TODO - play completed set sound.");
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (!mIsWorkoutValid) {
+            discardWorkout();
+        }
+        super.onDestroy();
     }
 }
