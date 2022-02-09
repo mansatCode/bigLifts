@@ -40,6 +40,7 @@ public interface LogEntryDao {
                 "SELECT tblWorkout.id FROM tblWorkout, tblExerciseWorkoutLink " +
                 "WHERE tblWorkout.id = tblExerciseWorkoutLink.workoutID " +
                 "AND tblExerciseWorkoutLink.exerciseID = :exerciseID " +
-                "ORDER BY tblWorkout.workoutDate DESC LIMIT 1)")
+                "AND tblWorkout.workoutDuration > 0 " +
+                "ORDER BY tblWorkout.workoutDate DESC)")
     LiveData<List<LogEntryModel>> getExerciseLogHistory (int exerciseID);
 }

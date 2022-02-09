@@ -444,8 +444,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                                     }
                                 }
                                 newExercise.setLogEntriesList(LogEntryModelList(newExercise.getId()));
-                                retrieveExerciseWorkoutLinks();
                                 retrieveExerciseHistory(newExercise);
+                                retrieveExerciseWorkoutLinks();
                                 mExercisesList.add(newExercise);
                                 mCurrentWorkoutRecyclerAdapter.notifyItemInserted(mExercisesList.size());
                             } else {
