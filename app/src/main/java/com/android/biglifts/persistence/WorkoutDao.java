@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -18,7 +19,7 @@ public interface WorkoutDao {
     @Insert
     Single<Long> insertWorkout(WorkoutModel workoutModel);
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateWorkout(WorkoutModel workoutModel);
 
     @Delete

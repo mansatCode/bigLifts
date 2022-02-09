@@ -4,15 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "tblExerciseWorkoutLink", foreignKeys = {@ForeignKey(entity = ExerciseModel.class,
-        parentColumns = "id",
-        childColumns = "exerciseID"),
+@Entity(tableName = "tblExerciseWorkoutLink", foreignKeys = {@ForeignKey(entity = ExerciseModel.class, parentColumns = "id", childColumns = "exerciseID"),
         @ForeignKey(entity = WorkoutModel.class,
                 parentColumns = "id",
-                childColumns = "workoutID")
-})
+                childColumns = "workoutID")})
 public class ExerciseWorkoutLinkModel {
 
     @PrimaryKey(autoGenerate = true)

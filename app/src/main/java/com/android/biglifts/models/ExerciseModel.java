@@ -10,6 +10,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity(tableName = "tblExercise")
 public class ExerciseModel implements Parcelable {
@@ -37,6 +38,9 @@ public class ExerciseModel implements Parcelable {
 
     @Ignore
     private ArrayList<LogEntryModel> logEntriesList;
+
+    @Ignore
+    private List<LogEntryModel> logEntriesHistoryList;
 
     public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category, int isVisible, String exerciseNote) {
         this.exerciseName = exerciseName;
@@ -145,6 +149,14 @@ public class ExerciseModel implements Parcelable {
         this.logEntriesList = logEntriesList;
     }
 
+    public List<LogEntryModel> getLogEntriesHistoryList() {
+        return logEntriesHistoryList;
+    }
+
+    public void setLogEntriesHistoryList(List<LogEntryModel> logEntriesHistoryList) {
+        this.logEntriesHistoryList = logEntriesHistoryList;
+    }
+
     protected ExerciseModel(Parcel in) {
         id = in.readInt();
         exerciseName = in.readString();
@@ -174,8 +186,10 @@ public class ExerciseModel implements Parcelable {
                 ", bodyPart='" + bodyPart + '\'' +
                 ", category='" + category + '\'' +
                 ", exerciseNote='" + exerciseNote + '\'' +
+                ", isVisible=" + isVisible +
                 ", isExpanded=" + isExpanded +
                 ", logEntriesList=" + logEntriesList +
+                ", logEntriesHistoryList=" + logEntriesHistoryList +
                 '}';
     }
 }

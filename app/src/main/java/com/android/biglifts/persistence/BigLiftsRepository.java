@@ -1,8 +1,10 @@
 package com.android.biglifts.persistence;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.ExerciseWorkoutLinkModel;
@@ -138,6 +140,10 @@ public class BigLiftsRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
+    }
+
+    public LiveData<List<LogEntryModel>> getExerciseHistory(int exerciseID) {
+        return mBigLiftsDatabase.getLogEntryDao().getExerciseLogHistory(exerciseID);
     }
 
     //endregion

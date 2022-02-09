@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.CurrentWorkoutActivity;
 import com.android.biglifts.R;
+import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.LogEntryModel;
 
 import java.util.ArrayList;
@@ -34,13 +36,15 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
     private SetRecyclerAdapter mSetRecyclerAdapter;
     private Context mContext;
     private OnSetInWorkoutListener mOnSetInWorkoutListener;
+    private ExerciseModel mExercise;
 
     // Constructor
-    public SetRecyclerAdapter(ArrayList<LogEntryModel> logEntriesList, Context context, OnSetInWorkoutListener onSetInWorkoutListener) {
+    public SetRecyclerAdapter(ArrayList<LogEntryModel> logEntriesList, Context context, OnSetInWorkoutListener onSetInWorkoutListener, ExerciseModel exerciseModel) {
         this.mLogEntriesList = logEntriesList;
         mContext = context;
         mSetRecyclerAdapter = this;
         mOnSetInWorkoutListener = onSetInWorkoutListener;
+        mExercise = exerciseModel;
     }
 
     public interface OnSetInWorkoutListener {
@@ -175,6 +179,18 @@ public class SetRecyclerAdapter extends RecyclerView.Adapter<SetRecyclerAdapter.
             holder.chk_confirmSet.setChecked(false);
         } else {
             holder.et_reps.setText(String.valueOf(logEntry.getReps()));
+        }
+
+        if (!mExercise.getLogEntriesHistoryList().isEmpty()) {
+            for (LogEntryModel pastLogEntry : mExercise.getLogEntriesHistoryList()) {
+                if (pastLogEntry.getSetNumber() == logEntry.getSetNumber()) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append(pastLogEntry.getWeight());
+                    stringBuilder.append(" kg x ");
+                    stringBuilder.append(pastLogEntry.getReps());
+                    holder.tv_previousSetData.setText(stringBuilder.toString());
+                }
+            }
         }
 
         holder.chk_confirmSet.setChecked(logEntry.isChecked());

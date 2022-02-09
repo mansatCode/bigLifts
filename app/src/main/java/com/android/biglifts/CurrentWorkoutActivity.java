@@ -413,7 +413,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         for (ExerciseModel exerciseModel : mExercisesList) {
             mBigLiftsRepository.insertLogEntries(exerciseModel.getLogEntriesList());
         }
-        Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show();
     }
 
     private boolean containsUnchecked(ArrayList<LogEntryModel> logEntriesList) {
@@ -445,6 +444,8 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                                     }
                                 }
                                 newExercise.setLogEntriesList(LogEntryModelList(newExercise.getId()));
+                                retrieveExerciseWorkoutLinks();
+                                retrieveExerciseHistory(newExercise);
                                 mExercisesList.add(newExercise);
                                 mCurrentWorkoutRecyclerAdapter.notifyItemInserted(mExercisesList.size());
                             } else {
@@ -466,7 +467,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         exerciseWorkoutLink.setExerciseID(exerciseID);
         exerciseWorkoutLink.setWorkoutID(mCurrentWorkout.getId());
         mBigLiftsRepository.insertExerciseWorkoutLink(exerciseWorkoutLink);
-        retrieveExerciseWorkoutLinks();
         return logEntryModelList;
     }
 
@@ -485,10 +485,17 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        discardWorkout();
+    private void retrieveExerciseHistory(ExerciseModel exerciseModel) {
+        mBigLiftsRepository.getExerciseHistory(exerciseModel.getId()).observe(this, new Observer<List<LogEntryModel>>() {
+            @Override
+            public void onChanged(List<LogEntryModel> logEntryModels) {
+                Log.d(TAG, "Retrieving " + exerciseModel.getExerciseName() + " history...");
+                Log.d(TAG, logEntryModels.toString());
+                if (logEntryModels != null) {
+                    exerciseModel.setLogEntriesHistoryList(logEntryModels);
+                }
+            }
+        });
     }
 
     @Override

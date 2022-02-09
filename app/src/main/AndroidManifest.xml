@@ -14,7 +14,8 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".CurrentWorkoutActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan"></activity>
         <activity
             android:name=".StartNewWorkoutActivity"
             android:screenOrientation="portrait">

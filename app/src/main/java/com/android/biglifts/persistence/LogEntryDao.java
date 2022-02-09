@@ -5,7 +5,10 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.RawQuery;
 import androidx.room.Update;
+import androidx.sqlite.db.SimpleSQLiteQuery;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.android.biglifts.models.LogEntryModel;
 
@@ -27,4 +30,16 @@ public interface LogEntryDao {
 
     @Query("SELECT * FROM tblLogEntry WHERE id = :id")
     LiveData<LogEntryModel> getLogEntryById(int id);
+
+    @Query("SELECT tblLogEntry.* FROM tblLogEntry, tblWorkout, tblExerciseWorkoutLink " +
+            "WHERE tblLogEntry.exerciseWorkoutLinkID = tblExerciseWorkoutLink.id " +
+            "AND tblExerciseWorkoutLink.exerciseID = :exerciseID " +
+            "AND tblExerciseWorkoutLink.workoutID = tblWorkout.id " +
+            "AND tblLogEntry.setDetails = 0 " +
+            "AND tblWorkout.id = (" +
+                "SELECT tblWorkout.id FROM tblWorkout, tblExerciseWorkoutLink " +
+                "WHERE tblWorkout.id = tblExerciseWorkoutLink.workoutID " +
+                "AND tblExerciseWorkoutLink.exerciseID = :exerciseID " +
+                "ORDER BY tblWorkout.workoutDate DESC LIMIT 1)")
+    LiveData<List<LogEntryModel>> getExerciseLogHistory (int exerciseID);
 }
