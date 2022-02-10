@@ -3,6 +3,7 @@ package com.android.biglifts.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,12 +14,15 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,9 +35,12 @@ import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 public class ExercisesFragment extends Fragment implements
         ExerciseRecyclerAdapter.OnExerciseListener,
@@ -114,6 +121,8 @@ public class ExercisesFragment extends Fragment implements
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mExerciseRecyclerAdapter = new ExerciseRecyclerAdapter(mContext, mExercisesList, this);
         mRecyclerView.setAdapter(mExerciseRecyclerAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallBack);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     @Override
@@ -192,5 +201,45 @@ public class ExercisesFragment extends Fragment implements
         }
         return false;
     }
+
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallBack =
+            new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            // TODO - swipe hides exercise, should show toast asking to undo
+            int position = viewHolder.getBindingAdapterPosition();
+            ExerciseModel hiddenExercise = mExercisesList.get(position);
+            hiddenExercise.setIsVisible(ExerciseModel.VISIBLE_FALSE);
+            mBigLiftsRepository.updateExercise(hiddenExercise);
+
+            Snackbar sb_UndoHideExercise = Snackbar.make(mRecyclerView, mExercisesList.get(position).getExerciseName() + " is now hidden", Snackbar.LENGTH_LONG);
+            sb_UndoHideExercise.setBackgroundTint(ContextCompat.getColor(mContext, R.color.primaryLightColor));
+            sb_UndoHideExercise.setTextColor(ContextCompat.getColor(mContext, R.color.white));
+            sb_UndoHideExercise.setAction("Undo", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    hiddenExercise.setIsVisible(ExerciseModel.VISIBLE_TRUE);
+                    mBigLiftsRepository.updateExercise(hiddenExercise);
+                }
+            }).show();
+        }
+
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    .addBackgroundColor(ContextCompat.getColor(mContext, R.color.orange))
+                    .addActionIcon(R.drawable.ic_baseline_hide)
+                    .create()
+                    .decorate();
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+    };
 }
 
