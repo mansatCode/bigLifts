@@ -24,6 +24,7 @@ public class StartNewWorkoutActivity extends AppCompatActivity implements View.O
 
     // Variables
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ff11a392115b53ad68e9980c24f8d702",
+    "identityHash": "4bc0a6fb0e1bcfa5610844ced6598b10",
     "entities": [
       {
         "tableName": "tblExercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseName` TEXT NOT NULL, `bodyPart` TEXT NOT NULL, `category` TEXT NOT NULL, `exerciseNote` TEXT, `isVisible` INTEGER NOT NULL DEFAULT 1)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseName` TEXT NOT NULL, `bodyPart` TEXT NOT NULL, `category` TEXT NOT NULL, `exerciseNote` TEXT, `isVisible` INTEGER NOT NULL DEFAULT 1, `cableGrip` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -44,6 +44,12 @@
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "1"
+          },
+          {
+            "fieldPath": "cableGrip",
+            "columnName": "cableGrip",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -214,7 +220,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ff11a392115b53ad68e9980c24f8d702')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4bc0a6fb0e1bcfa5610844ced6598b10')"
     ]
   }
 }

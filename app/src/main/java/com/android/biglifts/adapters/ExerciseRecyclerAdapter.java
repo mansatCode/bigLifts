@@ -54,6 +54,15 @@ public class ExerciseRecyclerAdapter extends RecyclerView.Adapter<ExerciseRecycl
         holder.tv_exerciseBodyPart.setText(mExercisesList.get(position).getBodyPart());
         holder.tv_exerciseCategory.setText(mExercisesList.get(position).getCategory());
         holder.itemView.setTag(mExercisesList.get(position).getId());
+
+        if (mExercisesList.get(position).getCategory().equals("Cable")) {
+            holder.tv_exerciseGrip.setText(mExercisesList.get(position).getCableGrip());
+            holder.tv_exerciseGrip.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            holder.tv_exerciseGrip.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -62,9 +71,7 @@ public class ExerciseRecyclerAdapter extends RecyclerView.Adapter<ExerciseRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView tv_exerciseName;
-        TextView tv_exerciseBodyPart;
-        TextView tv_exerciseCategory;
+        TextView tv_exerciseName, tv_exerciseBodyPart, tv_exerciseCategory, tv_exerciseGrip;
 
         OnExerciseListener onExerciseListener;
 
@@ -73,6 +80,7 @@ public class ExerciseRecyclerAdapter extends RecyclerView.Adapter<ExerciseRecycl
             tv_exerciseName = itemView.findViewById(R.id.row_exercise_tv_exerciseName);
             tv_exerciseBodyPart = itemView.findViewById(R.id.row_exercise_tv_bodyPart);
             tv_exerciseCategory = itemView.findViewById(R.id.row_exercise_tv_category);
+            tv_exerciseGrip = itemView.findViewById(R.id.row_exercise_tv_grip);
 
             this.onExerciseListener = onExerciseListener;
 

@@ -18,7 +18,7 @@ public interface ExerciseDao {
     void prePopulateExerciseTable(ExerciseModel[] exerciseModels);
 
     @Insert
-    void insertExercises(List<ExerciseModel> exerciseModels);
+    void insertExercise(ExerciseModel exerciseModel);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateExercise(ExerciseModel exerciseModel);
@@ -26,8 +26,8 @@ public interface ExerciseDao {
     @Delete
     void deleteExercises(List<ExerciseModel> exerciseModels);
 
-    @Query("SELECT * FROM tblExercise ORDER BY exerciseName ASC")
-    LiveData<List<ExerciseModel>> getAllExercisesOrderedAlphabetically();
+    @Query("SELECT * FROM tblExercise WHERE isVisible = 1 ORDER BY exerciseName ASC")
+    LiveData<List<ExerciseModel>> getAllVisibleExercisesOrderedAlphabetically();
 
     @Query("SELECT * FROM tblExercise WHERE id = :id")
     LiveData<ExerciseModel> getExerciseById(int id);

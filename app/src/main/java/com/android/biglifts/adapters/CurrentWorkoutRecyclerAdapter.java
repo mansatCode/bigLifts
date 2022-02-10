@@ -55,7 +55,18 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
     @Override
     public void onBindViewHolder(@NonNull CurrentWorkoutRecyclerAdapter.ViewHolder holder, int position) {
         ExerciseModel exercise = mExercisesList.get(position);
-        holder.tv_exerciseName.setText(exercise.getExerciseName());
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(exercise.getExerciseName());
+
+        if (exercise.getCableGrip() != null)
+        {
+            stringBuilder.append(" (");
+            stringBuilder.append(exercise.getCableGrip());
+            stringBuilder.append(")");
+        }
+
+        holder.tv_exerciseName.setText(stringBuilder.toString());
 
         // Here we have assigned the layout as LinearLayout with vertical orientation
         LinearLayoutManager layoutManager = new LinearLayoutManager(holder.rv_logEntries.getContext(), LinearLayoutManager.VERTICAL, false);

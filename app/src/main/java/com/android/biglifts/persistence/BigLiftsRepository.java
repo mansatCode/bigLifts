@@ -1,10 +1,8 @@
 package com.android.biglifts.persistence;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
-import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.ExerciseWorkoutLinkModel;
@@ -34,8 +32,8 @@ public class BigLiftsRepository {
 
     //region tblExercise Methods
 
-    public void insertExercises(List<ExerciseModel> exerciseModels) {
-        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseDao().insertExercises(exerciseModels))
+    public void insertExercises(ExerciseModel exerciseModel) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseDao().insertExercise(exerciseModel))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
@@ -61,7 +59,7 @@ public class BigLiftsRepository {
     }
 
     public LiveData<List<ExerciseModel>> getAllExercisesOrderedAlphabetically() {
-        return mBigLiftsDatabase.getExerciseDao().getAllExercisesOrderedAlphabetically();
+        return mBigLiftsDatabase.getExerciseDao().getAllVisibleExercisesOrderedAlphabetically();
     }
 
     //endregion

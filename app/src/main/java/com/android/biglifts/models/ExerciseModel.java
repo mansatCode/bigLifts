@@ -33,6 +33,8 @@ public class ExerciseModel implements Parcelable {
     @ColumnInfo(defaultValue = "1")
     private int isVisible;
 
+    private String cableGrip;
+
     @Ignore
     private boolean isExpanded;
 
@@ -42,22 +44,20 @@ public class ExerciseModel implements Parcelable {
     @Ignore
     private List<LogEntryModel> logEntriesHistoryList;
 
-    public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category, int isVisible, String exerciseNote) {
+    public ExerciseModel(@NonNull String exerciseName, @NonNull String bodyPart, @NonNull String category, int isVisible, String exerciseNote, String cableGrip) {
         this.exerciseName = exerciseName;
         this.bodyPart = bodyPart;
         this.category = category;
         this.exerciseNote = exerciseNote;
         this.isVisible = isVisible;
         this.isExpanded = false;
+        this.cableGrip = cableGrip;
     }
 
     @Ignore
     public ExerciseModel() {
         this.isExpanded = false;
     }
-
-    public static final int VISIBLE_FALSE = 0;
-    public static final int VISIBLE_TRUE = 1;
 
     @Override
     public int describeContents() {
@@ -72,6 +72,7 @@ public class ExerciseModel implements Parcelable {
         dest.writeString(category);
         dest.writeString(exerciseNote);
         dest.writeInt(isVisible);
+        dest.writeString(cableGrip);
     }
 
     public void cleanLogEntries (int removedSet) {
@@ -80,6 +81,14 @@ public class ExerciseModel implements Parcelable {
                 logEntryModel.decrementSetNumber();
             }
         }
+    }
+
+    public String getCableGrip() {
+        return cableGrip;
+    }
+
+    public void setCableGrip(String cableGrip) {
+        this.cableGrip = cableGrip;
     }
 
     public int getIsVisible() {
@@ -164,6 +173,7 @@ public class ExerciseModel implements Parcelable {
         category = in.readString();
         exerciseNote = in.readString();
         isVisible = in.readInt();
+        cableGrip = in.readString();
     }
 
     public static final Creator<ExerciseModel> CREATOR = new Creator<ExerciseModel>() {
@@ -187,9 +197,37 @@ public class ExerciseModel implements Parcelable {
                 ", category='" + category + '\'' +
                 ", exerciseNote='" + exerciseNote + '\'' +
                 ", isVisible=" + isVisible +
+                ", cableGrip='" + cableGrip + '\'' +
                 ", isExpanded=" + isExpanded +
                 ", logEntriesList=" + logEntriesList +
                 ", logEntriesHistoryList=" + logEntriesHistoryList +
                 '}';
     }
+
+    public static final int VISIBLE_FALSE = 0;
+    public static final int VISIBLE_TRUE = 1;
+
+    public static final String BODY_PART_CHEST = "Chest";
+    public static final String BODY_PART_BACK = "Back";
+    public static final String BODY_PART_ARMS = "Arms";
+    public static final String BODY_PART_LEGS = "Legs";
+    public static final String BODY_PART_SHOULDERS = "Shoulders";
+    public static final String BODY_PART_CORE = "Core";
+    public static final String[] EXERCISE_BODY_PARTS = {BODY_PART_CHEST, BODY_PART_BACK, BODY_PART_ARMS, BODY_PART_LEGS, BODY_PART_SHOULDERS, BODY_PART_CORE};
+
+    public static final String CATEGORY_FREE_WEIGHT = "Free weight";
+    public static final String CATEGORY_CABLE = "Cable";
+    public static final String CATEGORY_MACHINE = "Machine";
+    public static final String CATEGORY_BODY_WEIGHT = "Body weight";
+    public static final String CATEGORY_ASSISTED_BODY_WEIGHT = "Assisted body weight";
+    public static final String[] EXERCISE_CATEGORIES = {CATEGORY_FREE_WEIGHT, CATEGORY_CABLE, CATEGORY_MACHINE, CATEGORY_BODY_WEIGHT, CATEGORY_ASSISTED_BODY_WEIGHT};
+
+    public static final String HANDLE_SOFT_STIRRUP = "Soft stirrup handle";
+    public static final String HANDLE_TRICEP_ROPE = "Tricep rope";
+    public static final String HANDLE_V_HANDLE = "V handle";
+    public static final String HANDLE_STRAIGHT_BAR = "Straight bar";
+    public static final String HANDLE_ANGLED_METAL_BAR = "Angled metal bar";
+    public static final String HANDLE_LAT_BAR = "Lat bar";
+    public static final String HANDLE_OTHER = "Other";
+    public static final String[] EXERCISE_CABLE_ATTACHMENTS = {HANDLE_SOFT_STIRRUP, HANDLE_TRICEP_ROPE, HANDLE_V_HANDLE, HANDLE_STRAIGHT_BAR, HANDLE_ANGLED_METAL_BAR, HANDLE_LAT_BAR, HANDLE_OTHER};
 }

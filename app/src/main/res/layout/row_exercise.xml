@@ -43,4 +43,20 @@
         app:layout_constraintTop_toBottomOf="@id/row_exercise_tv_bodyPart"
         tools:text="Category" />
 
+    <TextView
+        android:id="@+id/row_exercise_tv_grip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_custom_input"
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/row_exercise_tv_category"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="Grip Type" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

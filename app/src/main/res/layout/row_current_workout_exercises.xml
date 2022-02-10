@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/primaryDarkColor"
                 android:gravity="center"
-                android:hint="Exercise Name"
+                android:hint="Exercise Name (Category - Cable)"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/white"

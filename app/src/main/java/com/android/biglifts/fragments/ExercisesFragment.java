@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.biglifts.AddExerciseActivity;
 import com.android.biglifts.R;
 import com.android.biglifts.SelectExerciseActivity;
 import com.android.biglifts.SpecificExerciseActivity;
@@ -39,6 +40,7 @@ public class ExercisesFragment extends Fragment implements
         ChipGroup.OnCheckedChangeListener,
         Toolbar.OnMenuItemClickListener {
 
+    // Constants
     public static final String EXTRA_EXERCISE_NAME = "com.android.biglifts.EXTRA_EXERCISE_NAME";
     public static final String EXTRA_EXERCISE_ID = "com.android.biglifts.EXTRA_EXERCISE_ID";
     public static final String EXTRA_EXERCISE = "com.android.biglifts.EXTRA_EXERCISE";
@@ -184,7 +186,8 @@ public class ExercisesFragment extends Fragment implements
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.menu_exercises_itm_addExercise:
-                Toast.makeText(mContext, "add", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(mContext, AddExerciseActivity.class);
+                startActivity(i);
                 return true;
         }
         return false;
