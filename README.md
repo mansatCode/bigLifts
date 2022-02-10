@@ -6,9 +6,7 @@ A workout tracker app with database functionality.
 -Add/remove exercises to your choosing  
 -Easily view exercise history and past workouts  
 
-Screenshots:
-
-Screenshots:
+Screenshots:  
 
 
 ![alt text](https://github.com/mansatCode/bigLifts-Android-App/blob/master/Screenshots/Track_workouts.png?raw=true)
