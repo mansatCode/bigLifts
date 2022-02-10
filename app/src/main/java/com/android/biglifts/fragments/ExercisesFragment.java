@@ -211,7 +211,6 @@ public class ExercisesFragment extends Fragment implements
 
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-            // TODO - swipe hides exercise, should show toast asking to undo
             int position = viewHolder.getBindingAdapterPosition();
             ExerciseModel hiddenExercise = mExercisesList.get(position);
             hiddenExercise.setIsVisible(ExerciseModel.VISIBLE_FALSE);
