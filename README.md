@@ -1,10 +1,10 @@
 # bigLifts-Android-App
 A workout tracker app with database functionality.
--Save workouts
--Create workout templates
--Monitor your progress for each exercise
--Add/remove exercises to your choosing
--Easily view exercise history and past workouts
+-Save workouts  
+-Create workout templates  
+-Monitor your progress for each exercise  
+-Add/remove exercises to your choosing  
+-Easily view exercise history and past workouts  
 
 Screenshots:
 
