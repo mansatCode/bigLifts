@@ -5,8 +5,10 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 
 import com.android.biglifts.models.ExerciseModel;
+import com.android.biglifts.models.ExerciseTemplateLinkModel;
 import com.android.biglifts.models.ExerciseWorkoutLinkModel;
 import com.android.biglifts.models.LogEntryModel;
+import com.android.biglifts.models.TemplateModel;
 import com.android.biglifts.models.WorkoutModel;
 
 import java.util.List;
@@ -129,6 +131,13 @@ public class BigLiftsRepository {
                 .subscribe();
     }
 
+    public void deleteExerciseWorkoutLinksByWorkoutIDAndExerciseID(long workoutID, int exerciseID) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseWorkoutLinkDao().deleteExerciseWorkoutLinksByWorkoutIDAndExerciseID(workoutID, exerciseID))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
     //endregion
 
     //region tblLogEntry Methods
@@ -146,6 +155,71 @@ public class BigLiftsRepository {
 
     //endregion
 
+    //region tblTemplate Methods
 
+    public void insertTemplate(TemplateModel templateModel) {
+        mBigLiftsDatabase.getTemplateDao().insertTemplate(templateModel)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(Long aLong) {
+                        templateModel.setId(aLong);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+                });
+    }
+
+    public void updateTemplate(TemplateModel templateModel) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getTemplateDao().updateTemplate(templateModel))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    public void deleteTemplate(TemplateModel templateModel) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getTemplateDao().deleteTemplate(templateModel))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    //endregion
+
+    //region tblExerciseTemplateLink Methods
+
+    public void insertExerciseTemplateLink(ExerciseTemplateLinkModel exerciseTemplateLinkModel) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseTemplateLinkDao().insertExerciseTemplateLink(exerciseTemplateLinkModel))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    public LiveData<List<ExerciseTemplateLinkModel>> getExerciseTemplateLinksByTemplateID(long templateID) {
+        return mBigLiftsDatabase.getExerciseTemplateLinkDao().getExerciseTemplateLinkByTemplateID(templateID);
+    }
+
+    public void deleteExerciseTemplateLinksByTemplateIDAndExerciseID(long templateID, int exerciseID) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseTemplateLinkDao().deleteExerciseTemplateLinksByTemplateIDAndExerciseID(templateID, exerciseID))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    public void deleteExerciseTemplateLinks(List<ExerciseTemplateLinkModel> exerciseTemplateLinkModels) {
+        Completable.fromAction(() -> mBigLiftsDatabase.getExerciseTemplateLinkDao().deleteExerciseTemplateLinks(exerciseTemplateLinkModels))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
+    //endregion
 
 }

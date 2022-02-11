@@ -31,4 +31,7 @@ public interface ExerciseWorkoutLinkDao {
 
     @Query("DELETE FROM tblExerciseWorkoutLink WHERE workoutID = :workoutID")
     void deleteExerciseWorkoutLinksByWorkoutID(long workoutID);
+
+    @Query("DELETE FROM tblExerciseWorkoutLink WHERE workoutID = :workoutID AND exerciseID = :exerciseID")
+    void deleteExerciseWorkoutLinksByWorkoutIDAndExerciseID(long workoutID, int exerciseID);
 }

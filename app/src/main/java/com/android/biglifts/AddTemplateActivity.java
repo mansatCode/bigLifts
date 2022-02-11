@@ -1,6 +1,7 @@
 package com.android.biglifts;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -18,10 +19,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +32,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.biglifts.adapters.CreateTemplateRecyclerAdapter;
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.ExerciseTemplateLinkModel;
+import com.android.biglifts.models.ExerciseWorkoutLinkModel;
+import com.android.biglifts.models.TemplateModel;
 import com.android.biglifts.persistence.BigLiftsRepository;
 import com.android.biglifts.utility.VerticalSpacingItemDecorator;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,6 +41,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -62,6 +68,7 @@ public class AddTemplateActivity extends AppCompatActivity implements
     private CreateTemplateRecyclerAdapter mCreateTemplateRecyclerAdapter;
     private BigLiftsRepository mBigLiftsRepository;
     private ExerciseModel mExerciseSelected;
+    private TemplateModel mCurrentTemplate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,7 @@ public class AddTemplateActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_add_template);
 
         initUI();
+        mBigLiftsRepository = new BigLiftsRepository(this);
         setListeners();
         initRecyclerView();
         insertTemplate();
@@ -104,7 +112,60 @@ public class AddTemplateActivity extends AppCompatActivity implements
     }
 
     private void insertTemplate() {
+        mCurrentTemplate = new TemplateModel(mTemplateTitleEditText.getText().toString());
+        mBigLiftsRepository.insertTemplate(mCurrentTemplate);
+    }
 
+    private void updateTemplate() {
+        mIsTemplateValid = true;
+        mCurrentTemplate.setTemplateName(mTemplateTitleEditText.getText().toString());
+        mBigLiftsRepository.updateTemplate(mCurrentTemplate);
+    }
+
+    private boolean validateTemplate() {
+        if (mExercisesList.isEmpty()) {
+            Snackbar sb_EmptyWorkoutError = Snackbar.make(mTemplateTitleEditText, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
+            sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
+            sb_EmptyWorkoutError.setTextColor(ContextCompat.getColor(this, R.color.white));
+            sb_EmptyWorkoutError.show();
+            return false;
+        }
+        else if (mTemplateTitleEditText.getText().toString().trim().isEmpty()) {
+            Snackbar sb_EmptyWorkoutTitleError = Snackbar.make(mTemplateTitleEditText, "Template needs a title.", Snackbar.LENGTH_LONG);
+            sb_EmptyWorkoutTitleError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
+            sb_EmptyWorkoutTitleError.setTextColor(ContextCompat.getColor(this, R.color.white));
+            sb_EmptyWorkoutTitleError.show();
+            return false;
+        }
+        return true;
+    }
+
+    private void insertExerciseTemplateLinks() {
+
+    }
+
+    private void discardTemplate() {
+        mBigLiftsRepository.deleteExerciseTemplateLinks(mExerciseTemplateLinksList);
+        mBigLiftsRepository.deleteTemplate(mCurrentTemplate);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (!mIsTemplateValid) {
+            discardTemplate();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        showUnsavedTemplateDialog();
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        showUnsavedTemplateDialog();
     }
 
     private void clearTemplateTitleFocus() {
@@ -116,7 +177,17 @@ public class AddTemplateActivity extends AppCompatActivity implements
         clearTemplateTitleFocus();
         switch (view.getId()) {
             case R.id.activity_add_template_fab_saveTemplate:
-                Toast.makeText(this, "save", Toast.LENGTH_SHORT).show();
+                // TODO - save template to database.
+
+                if (!validateTemplate()) {
+                    return;
+                }
+
+                updateTemplate();
+
+                insertExerciseTemplateLinks();
+
+                finish();
                 break;
             case R.id.activity_add_template_btn_addExercise:
                 Intent intent = new Intent(AddTemplateActivity.this, SelectExerciseActivity.class);
@@ -145,12 +216,32 @@ public class AddTemplateActivity extends AppCompatActivity implements
                             }
                             mExercisesList.add(newExercise);
                             mCreateTemplateRecyclerAdapter.notifyItemInserted(mExercisesList.size());
+                            // Insert the ExerciseTemplateLink
+                            ExerciseTemplateLinkModel exerciseTemplateLink = new ExerciseTemplateLinkModel();
+                            exerciseTemplateLink.setExerciseID(newExercise.getId());
+                            exerciseTemplateLink.setTemplateID(mCurrentTemplate.getId());
+                            mBigLiftsRepository.insertExerciseTemplateLink(exerciseTemplateLink);
+                            retrieveExerciseTemplateLinks();
                         } else {
                             Log.e(TAG, "onActivityResult: ERROR HAS OCCURRED");
                         }
                     }
                 }
             });
+
+    private void retrieveExerciseTemplateLinks() {
+        mBigLiftsRepository.getExerciseTemplateLinksByTemplateID(mCurrentTemplate.getId()).observe(this, new Observer<List<ExerciseTemplateLinkModel>>() {
+            @Override
+            public void onChanged(List<ExerciseTemplateLinkModel> exerciseTemplateLinkModels) {
+                if (mExerciseTemplateLinksList.size() > 0) {
+                    mExerciseTemplateLinksList.clear();
+                }
+                if (exerciseTemplateLinkModels != null) {
+                    mExerciseTemplateLinksList.addAll(exerciseTemplateLinkModels);
+                }
+            }
+        });
+    }
 
     @Override
     public void onExerciseInTemplateClick(int position, View view) {
@@ -179,10 +270,34 @@ public class AddTemplateActivity extends AppCompatActivity implements
                 int index = mExercisesList.indexOf(mExerciseSelected);
                 mExercisesList.remove(mExerciseSelected);
                 mCreateTemplateRecyclerAdapter.notifyItemRemoved(index);
+                mBigLiftsRepository.deleteExerciseTemplateLinksByTemplateIDAndExerciseID(mCurrentTemplate.getId(), mExerciseSelected.getId());
                 return true;
             default:
                 return false;
         }
+    }
+
+    private void showUnsavedTemplateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you finished?");
+        builder.setMessage("Current template will be discarded!");
+
+        builder.setPositiveButton("Cancel template", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                discardTemplate();
+                finish();
+            }
+        });
+        builder.setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     //Move exercise in workout around
@@ -218,6 +333,7 @@ public class AddTemplateActivity extends AppCompatActivity implements
             ExerciseModel removedExercise = mExercisesList.get(position);
             mExercisesList.remove(removedExercise);
             mCreateTemplateRecyclerAdapter.notifyItemRemoved(position);
+            mBigLiftsRepository.deleteExerciseTemplateLinksByTemplateIDAndExerciseID(mCurrentTemplate.getId(), mExerciseSelected.getId());
 
             Snackbar sb_UndoRemoveExercise = Snackbar.make(mRecyclerView, removedExercise.getExerciseName() + " was removed", Snackbar.LENGTH_LONG);
             sb_UndoRemoveExercise.setBackgroundTint(ContextCompat.getColor(AddTemplateActivity.this, R.color.primaryLightColor));
@@ -227,6 +343,10 @@ public class AddTemplateActivity extends AppCompatActivity implements
                 public void onClick(View view) {
                     mExercisesList.add(position, removedExercise);
                     mCreateTemplateRecyclerAdapter.notifyItemInserted(position);
+                    ExerciseTemplateLinkModel exerciseTemplateLink = new ExerciseTemplateLinkModel();
+                    exerciseTemplateLink.setExerciseID(removedExercise.getId());
+                    exerciseTemplateLink.setTemplateID(mCurrentTemplate.getId());
+                    mBigLiftsRepository.insertExerciseTemplateLink(exerciseTemplateLink);
                 }
             }).show();
         }

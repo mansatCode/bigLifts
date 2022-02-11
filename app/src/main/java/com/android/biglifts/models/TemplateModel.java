@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey;
 public class TemplateModel {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
     @NonNull
     private String templateName;
@@ -22,11 +22,11 @@ public class TemplateModel {
         this.templateName = templateName;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

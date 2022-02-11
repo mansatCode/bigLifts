@@ -22,12 +22,12 @@ public class ExerciseTemplateLinkModel {
     private int exerciseID;
 
     @NonNull
-    private int templateID;
+    private long templateID;
 
     @Ignore
     public ExerciseTemplateLinkModel() { }
 
-    public ExerciseTemplateLinkModel (int exerciseID, int templateID)
+    public ExerciseTemplateLinkModel (int exerciseID, long templateID)
     {
         this.exerciseID = exerciseID;
         this.templateID = templateID;
@@ -49,11 +49,11 @@ public class ExerciseTemplateLinkModel {
         this.exerciseID = exerciseID;
     }
 
-    public int getTemplateID() {
+    public long getTemplateID() {
         return templateID;
     }
 
-    public void setTemplateID(int templateID) {
+    public void setTemplateID(long templateID) {
         this.templateID = templateID;
     }
 

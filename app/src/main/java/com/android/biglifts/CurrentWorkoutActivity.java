@@ -183,10 +183,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mBigLiftsRepository.updateWorkout(mCurrentWorkout);
     }
 
-    private void finishWorkout() {
-        finish();
-    }
-
     private void discardWorkout() {
         // TODO - Delete any database entries with this workoutID too.
         mBigLiftsRepository.deleteExerciseWorkoutLinks(mExerciseWorkoutLinksList);
@@ -251,6 +247,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 int index = mExercisesList.indexOf(mExerciseSelected);
                 mExercisesList.remove(mExerciseSelected);
                 mCurrentWorkoutRecyclerAdapter.notifyItemRemoved(index);
+                mBigLiftsRepository.deleteExerciseWorkoutLinksByWorkoutIDAndExerciseID(mCurrentWorkout.getId(), mExerciseSelected.getId());
                 return true;
             default:
                 return false;
@@ -262,7 +259,6 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mExerciseSelected.setExerciseNote(updatedNote);
         clearFocus();
         int index = mExercisesList.indexOf(mExerciseSelected);
-        // TODO - update exercise
         mBigLiftsRepository.updateExercise(mExerciseSelected);
         mCurrentWorkoutRecyclerAdapter.notifyItemChanged(index);
     }
@@ -320,7 +316,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 break;
             case R.id.toolbar_current_workout_iv_discardWorkout:
                 discardWorkout();
-                finishWorkout();
+                finish();
                 break;
             case R.id.activity_current_workout_btn_finishWorkout:
                 if (!validateWorkout()) {
@@ -339,7 +335,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 }
 
                 insertLogEntries();
-                finishWorkout();
+                finish();
                 break;
         }
     }
@@ -499,6 +495,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         });
     }
 
+
     @Override
     public void onBackPressed() {
         showUnsavedWorkoutDialog();
@@ -538,7 +535,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                 mCurrentWorkoutRecyclerAdapter.notifyDataSetChanged();
                 mParentRecyclerView.getAdapter().notifyDataSetChanged();
                 insertLogEntries();
-                finishWorkout();
+                finish();
             }
         });
         builder.setNegativeButton("Go back", new DialogInterface.OnClickListener() {

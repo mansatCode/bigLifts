@@ -27,4 +27,7 @@ public interface ExerciseTemplateLinkDao {
 
     @Query("DELETE FROM tblExericseTemplateLink WHERE templateID = :templateID")
     void deleteExerciseTemplateLinksByTemplateID(long templateID);
+
+    @Query("DELETE FROM tblExericseTemplateLink WHERE templateID = :templateID AND exerciseID = :exerciseID")
+    void deleteExerciseTemplateLinksByTemplateIDAndExerciseID(long templateID, int exerciseID);
 }
