@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_dumbbell"
         android:supportsRtl="true"
         android:theme="@style/Theme.BigLifts">
-        <activity android:name=".AddExerciseActivity"></activity>
+        <activity
+            android:name=".AddTemplateActivity"
+            android:parentActivityName=".StartNewWorkoutActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AddExerciseActivity" />
         <activity
             android:name=".SpecificExerciseActivity"
             android:screenOrientation="portrait" />

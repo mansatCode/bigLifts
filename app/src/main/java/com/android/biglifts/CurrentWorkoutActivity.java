@@ -15,7 +15,6 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -75,10 +74,10 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     // UI Components
     private RecyclerView mParentRecyclerView;
     private ImageView mRestTimer, mDiscardWorkout;
-    private Button mAddExercise, mFinishWorkout;
+    private Button mAddExerciseButton, mFinishWorkoutButton;
     private Chronometer mChronometer;
-    private TextView mRestTimerDisplay;
-    private EditText mWorkoutTitle;
+    private TextView mRestTimerDisplayTextView;
+    private EditText mWorkoutTitleEditText;
 
     // Variables
     private ArrayList<ExerciseModel> mExercisesList = new ArrayList<>();
@@ -113,19 +112,19 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         mParentRecyclerView = findViewById(R.id.activity_current_workout_rv);
         mRestTimer = findViewById(R.id.toolbar_current_workout_iv_timer);
         mDiscardWorkout = findViewById(R.id.toolbar_current_workout_iv_discardWorkout);
-        mAddExercise = findViewById(R.id.activity_current_workout_btn_addExercise);
-        mFinishWorkout = findViewById(R.id.activity_current_workout_btn_finishWorkout);
+        mAddExerciseButton = findViewById(R.id.activity_current_workout_btn_addExercise);
+        mFinishWorkoutButton = findViewById(R.id.activity_current_workout_btn_finishWorkout);
         mChronometer = findViewById(R.id.toolbar_current_workout_chronometer);
-        mRestTimerDisplay = findViewById(R.id.toolbar_current_workout_tv_restTimer);
-        mWorkoutTitle = findViewById(R.id.activity_current_workout_et_workoutTitle);
+        mRestTimerDisplayTextView = findViewById(R.id.toolbar_current_workout_tv_restTimer);
+        mWorkoutTitleEditText = findViewById(R.id.activity_current_workout_et_workoutTitle);
     }
 
     private void setListeners()
     {
         mRestTimer.setOnClickListener(this);
         mDiscardWorkout.setOnClickListener(this);
-        mAddExercise.setOnClickListener(this);
-        mFinishWorkout.setOnClickListener(this);
+        mAddExerciseButton.setOnClickListener(this);
+        mFinishWorkoutButton.setOnClickListener(this);
     }
 
     private void initRecyclerView()
@@ -152,21 +151,21 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
 
     private void insertWorkout() {
         mCurrentWorkout = new WorkoutModel();
-        mCurrentWorkout.setWorkoutName(mWorkoutTitle.getText().toString());
+        mCurrentWorkout.setWorkoutName(mWorkoutTitleEditText.getText().toString());
         mCurrentWorkout.setWorkoutDate(Calendar.getInstance());
         mBigLiftsRepository.insertWorkout(mCurrentWorkout);
     }
 
     private boolean validateWorkout() {
         if (mExercisesList.isEmpty()) {
-            Snackbar sb_EmptyWorkoutError = Snackbar.make(mWorkoutTitle, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
+            Snackbar sb_EmptyWorkoutError = Snackbar.make(mWorkoutTitleEditText, "Add an exercise before proceeding.", Snackbar.LENGTH_LONG);
             sb_EmptyWorkoutError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
             sb_EmptyWorkoutError.setTextColor(ContextCompat.getColor(this, R.color.white));
             sb_EmptyWorkoutError.show();
             return false;
         }
-        else if (mWorkoutTitle.getText().toString().trim().isEmpty()) {
-            Snackbar sb_EmptyWorkoutTitleError = Snackbar.make(mWorkoutTitle, "Workout needs a title.", Snackbar.LENGTH_LONG);
+        else if (mWorkoutTitleEditText.getText().toString().trim().isEmpty()) {
+            Snackbar sb_EmptyWorkoutTitleError = Snackbar.make(mWorkoutTitleEditText, "Workout needs a title.", Snackbar.LENGTH_LONG);
             sb_EmptyWorkoutTitleError.setBackgroundTint(ContextCompat.getColor(this, R.color.primaryLightColor));
             sb_EmptyWorkoutTitleError.setTextColor(ContextCompat.getColor(this, R.color.white));
             sb_EmptyWorkoutTitleError.show();
@@ -179,7 +178,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         pauseChronometer();
         mIsWorkoutValid = true;
         long workoutDurationMillis = SystemClock.elapsedRealtime() - mChronometer.getBase();
-        mCurrentWorkout.setWorkoutName(mWorkoutTitle.getText().toString());
+        mCurrentWorkout.setWorkoutName(mWorkoutTitleEditText.getText().toString());
         mCurrentWorkout.setWorkoutDuration(workoutDurationMillis);
         mBigLiftsRepository.updateWorkout(mCurrentWorkout);
     }
@@ -202,7 +201,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     }
 
     private void clearWorkoutTitleFocus() {
-        mWorkoutTitle.clearFocus();
+        mWorkoutTitleEditText.clearFocus();
     }
 
     private void showOptionsPopupMenu(View view) {
@@ -367,7 +366,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
     private void updateRestTimerText() {
         int minutes = (int) (mRestTimeInMilliseconds / 1000) / 60;
         int seconds = (int) (mRestTimeInMilliseconds / 1000) % 60;
-        mRestTimerDisplay.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+        mRestTimerDisplayTextView.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
 
     public void resetRestTimer() {
@@ -382,7 +381,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
         if (mIsTimerRunning) {
             mCountDownTimer.cancel();
             mIsTimerRunning = false;
-            mRestTimerDisplay.setText("00:00");
+            mRestTimerDisplayTextView.setText("00:00");
             mRestTimeInMilliseconds = mRestTimeInMillisecondsDefault;
         }
     }
@@ -438,7 +437,7 @@ public class CurrentWorkoutActivity extends AppCompatActivity implements
                                 int newExerciseID = newExercise.getId();
                                 for (ExerciseModel exerciseModel : mExercisesList) {
                                     if (newExerciseID == exerciseModel.getId()) {
-                                        Snackbar sb_DuplicateExerciseError = Snackbar.make(mWorkoutTitle, "Exercise already present in workout.", Snackbar.LENGTH_LONG);
+                                        Snackbar sb_DuplicateExerciseError = Snackbar.make(mWorkoutTitleEditText, "Exercise already present in workout.", Snackbar.LENGTH_LONG);
                                         sb_DuplicateExerciseError.setBackgroundTint(ContextCompat.getColor(CurrentWorkoutActivity.this, R.color.primaryLightColor));
                                         sb_DuplicateExerciseError.setTextColor(ContextCompat.getColor(CurrentWorkoutActivity.this, R.color.white));
                                         sb_DuplicateExerciseError.show();

@@ -9,8 +9,10 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.android.biglifts.models.ExerciseModel;
+import com.android.biglifts.models.ExerciseTemplateLinkModel;
 import com.android.biglifts.models.ExerciseWorkoutLinkModel;
 import com.android.biglifts.models.LogEntryModel;
+import com.android.biglifts.models.TemplateModel;
 import com.android.biglifts.models.WorkoutModel;
 import com.android.biglifts.utility.AppExecutors;
 import com.android.biglifts.utility.ExercisesData;
@@ -19,7 +21,9 @@ import com.android.biglifts.utility.ExercisesData;
         ExerciseModel.class,
         WorkoutModel.class,
         ExerciseWorkoutLinkModel.class,
-        LogEntryModel.class },
+        LogEntryModel.class,
+        TemplateModel.class,
+        ExerciseTemplateLinkModel.class },
         version = 1)
 public abstract class BigLiftsDatabase extends RoomDatabase {
 
@@ -56,4 +60,6 @@ public abstract class BigLiftsDatabase extends RoomDatabase {
     public abstract WorkoutDao getWorkoutDao();
     public abstract ExerciseWorkoutLinkDao getExerciseWorkoutLinkDao();
     public abstract LogEntryDao getLogEntryDao();
+    public abstract TemplateDao getTemplateDao();
+    public abstract ExerciseTemplateLinkDao getExerciseTemplateLinkDao();
 }

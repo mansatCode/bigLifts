@@ -7,10 +7,6 @@
         android:title="Summary"
         android:icon="@drawable/ic_baseline_summary" />
     <item
-        android:id="@+id/historyMenuIcon"
-        android:title="History"
-        android:icon="@drawable/ic_baseline_history"/>
-    <item
         android:id="@+id/exercisesMenuIcon"
         android:title="Exercises"
         android:icon="@drawable/ic_baseline_exercises"/>

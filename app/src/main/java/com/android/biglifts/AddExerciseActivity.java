@@ -22,14 +22,14 @@ public class AddExerciseActivity extends AppCompatActivity implements View.OnCli
     private static final String TAG = "AddExerciseActivity";
 
     // UI Components
-    private FloatingActionButton mFloatingActionButton;
+    private FloatingActionButton mAddExerciseFAB;
     private LinearLayout mBodyPartContainer, mCategoryContainer, mGripContainer;
     private TextView mBodyPartTextView, mCategoryTextView, mGripTextView;
     private EditText mExerciseNameEditText;
     private Toolbar mToolbar;
 
+    // Variables
     private String mSelectedBodyPart, mSelectedCategory, mSelectedGrip;
-
     private BigLiftsRepository mBigLiftsRepository;
 
     @Override
@@ -51,7 +51,7 @@ public class AddExerciseActivity extends AppCompatActivity implements View.OnCli
         mCategoryTextView = findViewById(R.id.activity_add_exercise_tv_category);
         mGripTextView = findViewById(R.id.activity_add_exercise_tv_grip);
         mExerciseNameEditText = (EditText) findViewById(R.id.activity_add_exercise_et_exerciseName);
-        mFloatingActionButton = findViewById(R.id.activity_add_exercise_fab_addExercise);
+        mAddExerciseFAB = findViewById(R.id.activity_add_exercise_fab_addExercise);
 
         mToolbar = (Toolbar) findViewById(R.id.activity_add_exercise_tb);
         setSupportActionBar(mToolbar);
@@ -70,7 +70,7 @@ public class AddExerciseActivity extends AppCompatActivity implements View.OnCli
         mBodyPartContainer.setOnClickListener(this);
         mCategoryContainer.setOnClickListener(this);
         mGripContainer.setOnClickListener(this);
-        mFloatingActionButton.setOnClickListener(this);
+        mAddExerciseFAB.setOnClickListener(this);
     }
 
     @Override
