@@ -49,7 +49,7 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_current_workout_exercises, parent, false);
-        return new ViewHolder(view, mOnExerciseInWorkoutListener, mContext);
+        return new ViewHolder(view, mOnExerciseInWorkoutListener);
     }
 
     @Override
@@ -97,9 +97,8 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
         RecyclerView rv_logEntries;
 
         private OnExerciseInWorkoutListener onExerciseInWorkoutListener;
-        private Context context;
 
-        public ViewHolder(@NonNull View itemView, OnExerciseInWorkoutListener onExerciseInWorkoutListener, Context context) {
+        public ViewHolder(@NonNull View itemView, OnExerciseInWorkoutListener onExerciseInWorkoutListener) {
             super(itemView);
             iv_expand = itemView.findViewById(R.id.row_current_workout_exercises_iv_tripleLines);
             iv_options = itemView.findViewById(R.id.row_current_workout_exercises_iv_options);
@@ -108,7 +107,6 @@ public class CurrentWorkoutRecyclerAdapter extends RecyclerView.Adapter<CurrentW
             cl_expandableLayout = itemView.findViewById(R.id.row_current_workout_exercises_cl_expandableLayout);
             rv_logEntries = itemView.findViewById(R.id.row_current_workout_exercises_rv);
 
-            this.context = context;
             this.onExerciseInWorkoutListener = onExerciseInWorkoutListener;
 
             iv_expand.setOnClickListener(this);

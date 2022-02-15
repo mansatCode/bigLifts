@@ -177,6 +177,10 @@ public class BigLiftsRepository {
                 });
     }
 
+    public LiveData<List<TemplateModel>> getAllTemplates() {
+        return mBigLiftsDatabase.getTemplateDao().getAllTemplates();
+    }
+
     public void updateTemplate(TemplateModel templateModel) {
         Completable.fromAction(() -> mBigLiftsDatabase.getTemplateDao().updateTemplate(templateModel))
                 .subscribeOn(Schedulers.io())

@@ -1,7 +1,6 @@
 package com.android.biglifts.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +18,12 @@ import java.util.List;
 
 public class ExerciseRecyclerAdapter extends RecyclerView.Adapter<ExerciseRecyclerAdapter.ViewHolder> implements Filterable {
 
+    // Constants
     private static final String TAG = "ExerciseRecyclerAdapter";
     public static final String EXTRA_EXERCISE_NAME = "com.android.biglifts.EXTRA_EXERCISE_NAME";
     public static final String EXTRA_EXERCISE_ID = "com.android.biglifts.EXTRA_EXERCISE_ID";
 
+    // Variables
     private ArrayList<ExerciseModel> mExercisesList;
     private ArrayList<ExerciseModel> mExercisesListFull;
     private OnExerciseListener mOnExerciseListener;
@@ -89,12 +90,12 @@ public class ExerciseRecyclerAdapter extends RecyclerView.Adapter<ExerciseRecycl
 
         @Override
         public void onClick(View v) {
-            onExerciseListener.onClick(getBindingAdapterPosition());
+            onExerciseListener.onExerciseClick(getBindingAdapterPosition());
         }
     }
 
     public interface OnExerciseListener {
-        void onClick(int position);
+        void onExerciseClick(int position);
     }
 
     @Override
