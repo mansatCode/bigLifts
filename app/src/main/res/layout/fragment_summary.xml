@@ -29,58 +29,138 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/bg_exercise"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@id/fragment_summary_guideline"
         app:layout_constraintTop_toBottomOf="@id/fragment_summary_abl">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fragment_summary_fab_squat"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/fragment_summary_mcv_squat"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:backgroundTint="@color/blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/fragment_summary_fab_bench"
+            app:layout_constraintRight_toLeftOf="@id/fragment_summary_mcv_bench"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_weight="1" />
+            app:layout_constraintVertical_weight="1"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fragment_summary_fab_bench"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="70 KG"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:text="Squat"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/fragment_summary_mcv_squat"
+            app:layout_constraintRight_toRightOf="@id/fragment_summary_mcv_squat"
+            app:layout_constraintTop_toBottomOf="@id/fragment_summary_mcv_squat" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/fragment_summary_mcv_bench"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:backgroundTint="@color/blue"
-            android:text="Deadlift"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/fragment_summary_fab_squat"
-            app:layout_constraintRight_toLeftOf="@id/fragment_summary_fab_deadlift"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintLeft_toRightOf="@id/fragment_summary_mcv_squat"
+            app:layout_constraintRight_toLeftOf="@id/fragment_summary_mcv_deadlift"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fragment_summary_fab_deadlift"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="100 KG"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:text="Bench"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/fragment_summary_mcv_bench"
+            app:layout_constraintRight_toRightOf="@id/fragment_summary_mcv_bench"
+            app:layout_constraintTop_toBottomOf="@id/fragment_summary_mcv_bench" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/fragment_summary_mcv_deadlift"
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:backgroundTint="@color/blue"
-            android:text="Deadlift"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/fragment_summary_fab_bench"
+            app:layout_constraintLeft_toRightOf="@id/fragment_summary_mcv_bench"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:hint="140 KG"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:text="Deadlift"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/fragment_summary_mcv_deadlift"
+            app:layout_constraintRight_toRightOf="@id/fragment_summary_mcv_deadlift"
+            app:layout_constraintTop_toBottomOf="@id/fragment_summary_mcv_deadlift" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/fragment_summary_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.3" />
 
     <TextView
         android:id="@+id/fragment_summary_tv_pastWorkouts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="PAST WORKOUTS"
         android:textAllCaps="true"
