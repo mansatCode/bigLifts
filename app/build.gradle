@@ -63,4 +63,7 @@ dependencies {
 
     // RecyclerView swipe decorator
     implementation 'com.github.xabaras:RecyclerViewSwipeDecorator:1.3'
+
+    // Graphs
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

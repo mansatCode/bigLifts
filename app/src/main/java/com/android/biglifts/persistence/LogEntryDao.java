@@ -10,6 +10,7 @@ import androidx.room.Update;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 import androidx.sqlite.db.SupportSQLiteQuery;
 
+import com.android.biglifts.models.LogDatePojo;
 import com.android.biglifts.models.LogEntryModel;
 
 import java.util.List;
@@ -43,4 +44,11 @@ public interface LogEntryDao {
                 "AND tblWorkout.workoutDuration > 0 " +
                 "ORDER BY tblWorkout.workoutDate DESC)")
     LiveData<List<LogEntryModel>> getExerciseLogHistory (int exerciseID);
+
+    @Query("SELECT tblLogEntry.weight as weight, tblLogEntry.reps as reps, tblLogEntry.setDetails as setDetails, tblWorkout.workoutDate as logDate FROM tblLogEntry, tblWorkout, tblExerciseWorkoutLink WHERE " +
+            ":exerciseID = tblExerciseWorkoutLink.exerciseID AND " +
+            "tblExerciseWorkoutLink.workoutID = tblWorkout.id AND " +
+            "tblExerciseWorkoutLink.id = tblLogEntry.exerciseWorkoutLinkID " +
+            "ORDER BY tblWorkout.workoutDate ASC")
+    LiveData<List<LogDatePojo>> getLogChartDataByExerciseID(int exerciseID);
 }

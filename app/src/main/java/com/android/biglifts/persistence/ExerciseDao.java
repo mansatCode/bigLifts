@@ -33,6 +33,12 @@ public interface ExerciseDao {
     LiveData<ExerciseModel> getExerciseById(int id);
     // Flowable<ExerciseModel> loadExerciseById(int id);
 
+    @Query("SELECT tblExercise.* FROM tblTemplate, tblExercise, tblExericseTemplateLink " +
+            "WHERE tblTemplate.id = tblExericseTemplateLink.templateID " +
+            "AND tblExericseTemplateLink.exerciseID = tblExercise.id " +
+            "AND tblTemplate.id = :templateID")
+    LiveData<List<ExerciseModel>> getExercisesInTemplate(long templateID);
+
     @Query("DELETE FROM tblExercise")
     void deleteAllExercises();
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.ExerciseTemplateLinkModel;
 import com.android.biglifts.models.ExerciseWorkoutLinkModel;
+import com.android.biglifts.models.LogDatePojo;
 import com.android.biglifts.models.LogEntryModel;
 import com.android.biglifts.models.TemplateModel;
 import com.android.biglifts.models.WorkoutModel;
@@ -62,6 +63,10 @@ public class BigLiftsRepository {
 
     public LiveData<List<ExerciseModel>> getAllExercisesOrderedAlphabetically() {
         return mBigLiftsDatabase.getExerciseDao().getAllVisibleExercisesOrderedAlphabetically();
+    }
+
+    public LiveData<List<ExerciseModel>> getExercisesInTemplate(long templateID) {
+        return mBigLiftsDatabase.getExerciseDao().getExercisesInTemplate(templateID);
     }
 
     //endregion
@@ -151,6 +156,10 @@ public class BigLiftsRepository {
 
     public LiveData<List<LogEntryModel>> getExerciseHistory(int exerciseID) {
         return mBigLiftsDatabase.getLogEntryDao().getExerciseLogHistory(exerciseID);
+    }
+
+    public LiveData<List<LogDatePojo>> getLogChartDataByExerciseID(int exerciseID) {
+        return mBigLiftsDatabase.getLogEntryDao().getLogChartDataByExerciseID(exerciseID);
     }
 
     //endregion

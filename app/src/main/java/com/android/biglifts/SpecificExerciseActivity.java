@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.android.biglifts.adapters.SpecificExerciseFragmentAdapter;
@@ -24,7 +25,10 @@ public class SpecificExerciseActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
     private ViewPager2 mViewPager;
     private SpecificExerciseFragmentAdapter mFragmentAdapter;
-    private static long mExerciseID;
+    public static long mExerciseID;
+
+    // Variables
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +38,15 @@ public class SpecificExerciseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String exerciseName = intent.getStringExtra(EXTRA_EXERCISE_NAME );
         mExerciseID = intent.getLongExtra(EXTRA_EXERCISE_ID, -1);
+        Log.d(TAG, "onCreate: exerciseID " + mExerciseID);
 
         initUI(exerciseName);
         setListeners();
         initTabLayout();
+    }
+
+    public long getExerciseID() {
+        return mExerciseID;
     }
 
     private void initUI(String exerciseName) {

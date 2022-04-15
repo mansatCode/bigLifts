@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.biglifts.R;
+import com.android.biglifts.models.ExerciseModel;
 import com.android.biglifts.models.TemplateModel;
 
 import java.util.ArrayList;
@@ -46,7 +47,27 @@ public class TemplateRecyclerAdapter extends RecyclerView.Adapter<TemplateRecycl
 
         holder.itemView.setTag(template.getId());
         holder.tv_templateName.setText(template.getTemplateName());
-        holder.tv_exercisesInTemplate.setText("temp");
+
+        StringBuilder sb = new StringBuilder();
+        for (ExerciseModel exerciseModel : template.getExercisesInTemplateList())
+        {
+            sb.append(exerciseModel.getExerciseName());
+
+            if (exerciseModel.getCategory() == "Cable")
+            {
+                sb.append(" ");
+                sb.append("(");
+                sb.append(exerciseModel.getCableGrip());
+                sb.append(")");
+            }
+            sb.append("\n");
+        }
+        if (sb.length() > 0)
+        {
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+        holder.tv_exercisesInTemplate.setText(sb.toString());
     }
 
     @Override

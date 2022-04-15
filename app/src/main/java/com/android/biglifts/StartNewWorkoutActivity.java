@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -81,6 +82,9 @@ public class StartNewWorkoutActivity extends AppCompatActivity implements
                     mTemplateList.clear();
                 }
                 if (templateModels != null) {
+                    for (TemplateModel templateModel : templateModels) {
+                        templateModel.updateExercisesList(mBigLiftsRepository, StartNewWorkoutActivity.this, mTemplateRecyclerAdapter);
+                    }
                     mTemplateList.addAll(templateModels);
                 }
                 mTemplateRecyclerAdapter.notifyDataSetChanged();
