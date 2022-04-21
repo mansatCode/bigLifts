@@ -93,6 +93,10 @@ public class BigLiftsRepository {
                 });
     }
 
+    public LiveData<List<WorkoutModel>> getAllWorkouts() {
+        return mBigLiftsDatabase.getWorkoutDao().getAllWorkouts();
+    }
+
     public void updateWorkout(WorkoutModel workoutModel) {
         Completable.fromAction(() -> mBigLiftsDatabase.getWorkoutDao().updateWorkout(workoutModel))
                 .subscribeOn(Schedulers.io())
